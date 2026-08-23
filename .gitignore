@@ -1,0 +1,322 @@
+# ==============================================================================
+# Global & Monorepo Root .gitignore
+# Project: KissanVikas (NestJS Backend, Next.js Web App, React Native Mobile,
+#                      FastAPI AI Services, Python Drone Simulator)
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# Operating System Files
+# ------------------------------------------------------------------------------
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.stackdump
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ------------------------------------------------------------------------------
+# IDEs, Editors & Tooling
+# ------------------------------------------------------------------------------
+# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+.vscode-test/
+
+# JetBrains / IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+cmake-build-*/
+
+# Eclipse & NetBeans
+.project
+.classpath
+.settings/
+.c9/
+*.launch
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Visual Studio
+.vs/
+
+# Vim & Emacs
+*.swp
+*.swo
+*.bak
+\#*\#
+.\#*
+
+# ------------------------------------------------------------------------------
+# Environment Variables & Secrets (NEVER COMMIT SENSITIVE DATA)
+# ------------------------------------------------------------------------------
+.env
+.env.*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Allow example and template environment files
+!.env.example
+!.env.*.example
+!.env.template
+!.env.sample
+
+# Certificates, Keys & Credentials
+*.pem
+*.key
+*.crt
+*.cer
+*.pfx
+*.p12
+*.p8
+*.mobileprovision
+*.keystore
+*.jks
+credentials.json
+serviceAccountKey*.json
+firebase-adminsdk*.json
+google-services.json
+GoogleService-Info.plist
+
+# ------------------------------------------------------------------------------
+# Node.js / TypeScript / Web & Backend (Next.js & NestJS)
+# ------------------------------------------------------------------------------
+# Dependencies
+node_modules/
+jspm_packages/
+web_modules/
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Build and compilation outputs
+dist/
+build/
+out/
+target/
+.next/
+.nuxt/
+.svelte-kit/
+.vercel
+.netlify
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Diagnostic & Debug logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Process & Runtime state
+pids/
+*.pid
+*.seed
+*.pid.lock
+.temp/
+.tmp/
+temp/
+tmp/
+
+# ------------------------------------------------------------------------------
+# Python & AI/ML Services (ai-services)
+# ------------------------------------------------------------------------------
+# Byte-compiled / optimized files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+*.dylib
+*.dll
+*.pyd
+
+# Python distribution and packaging
+.Python
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+.conda/
+pip-wheel-metadata/
+
+# Jupyter Notebooks & Data exploration
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# AI / ML Model Weights, Checkpoints & Large Artifacts
+# (Track source code; store heavy model binaries in S3/GCS/MinIO/DVC/HuggingFace)
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.tflite
+*.h5
+*.pkl
+*.pickle
+*.joblib
+*.bin
+*.safetensors
+models/weights/
+models/checkpoints/
+checkpoints/
+runs/
+wandb/
+tensorboard/
+data/raw/
+data/processed/
+datasets/
+
+# ------------------------------------------------------------------------------
+# Drone Simulator & Robotics / ROS (drone-simulator)
+# ------------------------------------------------------------------------------
+# ROS / ROS2 build artifacts & logs
+log/
+install/
+devel/
+*.bag
+*.bag.active
+*.mcap
+*.db3
+
+# Simulator recordings & flight telemetry dumps
+recordings/
+telemetry_logs/
+flight_records/
+*.world.bak
+*.mp4
+*.avi
+
+# ------------------------------------------------------------------------------
+# Mobile App (React Native / Expo / iOS / Android)
+# ------------------------------------------------------------------------------
+# Expo & Metro bundler
+.expo/
+.expo-shared/
+web-build/
+.metro-health-check*
+expo-env.d.ts
+
+# Android native build outputs
+android/app/build/
+android/.gradle/
+android/local.properties
+android/app/debug.keystore
+*.apk
+*.aab
+*.dex
+captures/
+.externalNativeBuild/
+.cxx/
+.kotlin/
+
+# iOS native build outputs
+ios/Pods/
+ios/build/
+ios/DerivedData/
+ios/*.xcworkspace/xcuserdata
+ios/*.xcodeproj/xcuserdata
+ios/*.xcodeproj/project.xcworkspace/xcuserdata
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# ------------------------------------------------------------------------------
+# Databases, Docker & Local Persistence
+# ------------------------------------------------------------------------------
+*.sqlite
+*.sqlite3
+*.db
+dump.rdb
+
+# Local database volumes / persistent docker storage
+postgres_data/
+mysql_data/
+redis_data/
+mongo_data/
+minio_data/
+docker_volumes/
+.docker-data/
+docker-compose.override.yml
+
+# ------------------------------------------------------------------------------
+# Testing & Code Quality
+# ------------------------------------------------------------------------------
+coverage/
+.nyc_output/
+.lcov/
+junit.xml
+test-results/
+.pytest_cache/
+.tox/
+.nox/
+.hypothesis/
+.mypy_cache/
+.pyre/
+.pytype/
+.ruff_cache/
