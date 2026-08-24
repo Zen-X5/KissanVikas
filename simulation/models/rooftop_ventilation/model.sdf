@@ -1,0 +1,95 @@
+<?xml version="1.0" ?>
+<sdf version="1.9">
+  <model name="rooftop_ventilation">
+    <static>true</static>
+
+    <link name="ventilation_structure">
+      <pose>0 0 0 0 0 0</pose>
+
+      <!-- ======================================================== -->
+      <!-- Bay 1 Ridge Vent (Y = -10.0m, Z = 6.5m - 7.1m)           -->
+      <!-- ======================================================== -->
+      <!-- Vent Cap Cover -->
+      <visual name="bay1_vent_cap">
+        <pose>0 -10.0 7.05 0 0 0</pose>
+        <geometry><box><size>58.0 1.2 0.05</size></box></geometry>
+        <material><ambient>0.7 0.75 0.8 1</ambient><diffuse>0.78 0.82 0.86 1</diffuse><specular>0.6 0.6 0.6 1</specular></material>
+      </visual>
+      <!-- South Vent Flap / Louver Opening (slanted) -->
+      <visual name="bay1_vent_flap_south">
+        <pose>0 -10.45 6.75 0.52 0 0</pose>
+        <geometry><box><size>58.0 0.65 0.03</size></box></geometry>
+        <material><ambient>0.82 0.9 0.95 0.6</ambient><diffuse>0.85 0.92 0.98 0.6</diffuse></material>
+      </visual>
+      <!-- North Vent Flap / Louver Opening (slanted) -->
+      <visual name="bay1_vent_flap_north">
+        <pose>0 -9.55 6.75 -0.52 0 0</pose>
+        <geometry><box><size>58.0 0.65 0.03</size></box></geometry>
+        <material><ambient>0.82 0.9 0.95 0.6</ambient><diffuse>0.85 0.92 0.98 0.6</diffuse></material>
+      </visual>
+      <!-- Vent Support Posts -->
+      <visual name="bay1_vent_posts">
+        <pose>0 -10.0 6.75 0 0 0</pose>
+        <geometry><box><size>58.0 0.08 0.5</size></box></geometry>
+        <material><ambient>0.4 0.45 0.5 1</ambient><diffuse>0.5 0.55 0.6 1</diffuse></material>
+      </visual>
+
+      <!-- ======================================================== -->
+      <!-- Bay 2 Ridge Vent (Y = 0.0m, Z = 6.5m - 7.1m)             -->
+      <!-- ======================================================== -->
+      <!-- Vent Cap Cover -->
+      <visual name="bay2_vent_cap">
+        <pose>0 0.0 7.05 0 0 0</pose>
+        <geometry><box><size>58.0 1.2 0.05</size></box></geometry>
+        <material><ambient>0.7 0.75 0.8 1</ambient><diffuse>0.78 0.82 0.86 1</diffuse><specular>0.6 0.6 0.6 1</specular></material>
+      </visual>
+      <!-- South Vent Flap / Louver Opening -->
+      <visual name="bay2_vent_flap_south">
+        <pose>0 -0.45 6.75 0.52 0 0</pose>
+        <geometry><box><size>58.0 0.65 0.03</size></box></geometry>
+        <material><ambient>0.82 0.9 0.95 0.6</ambient><diffuse>0.85 0.92 0.98 0.6</diffuse></material>
+      </visual>
+      <!-- North Vent Flap / Louver Opening -->
+      <visual name="bay2_vent_flap_north">
+        <pose>0 0.45 6.75 -0.52 0 0</pose>
+        <geometry><box><size>58.0 0.65 0.03</size></box></geometry>
+        <material><ambient>0.82 0.9 0.95 0.6</ambient><diffuse>0.85 0.92 0.98 0.6</diffuse></material>
+      </visual>
+      <!-- Vent Support Posts -->
+      <visual name="bay2_vent_posts">
+        <pose>0 0.0 6.75 0 0 0</pose>
+        <geometry><box><size>58.0 0.08 0.5</size></box></geometry>
+        <material><ambient>0.4 0.45 0.5 1</ambient><diffuse>0.5 0.55 0.6 1</diffuse></material>
+      </visual>
+
+      <!-- ======================================================== -->
+      <!-- Bay 3 Ridge Vent (Y = 10.0m, Z = 6.5m - 7.1m)            -->
+      <!-- ======================================================== -->
+      <!-- Vent Cap Cover -->
+      <visual name="bay3_vent_cap">
+        <pose>0 10.0 7.05 0 0 0</pose>
+        <geometry><box><size>58.0 1.2 0.05</size></box></geometry>
+        <material><ambient>0.7 0.75 0.8 1</ambient><diffuse>0.78 0.82 0.86 1</diffuse><specular>0.6 0.6 0.6 1</specular></material>
+      </visual>
+      <!-- South Vent Flap / Louver Opening -->
+      <visual name="bay3_vent_flap_south">
+        <pose>0 9.55 6.75 0.52 0 0</pose>
+        <geometry><box><size>58.0 0.65 0.03</size></box></geometry>
+        <material><ambient>0.82 0.9 0.95 0.6</ambient><diffuse>0.85 0.92 0.98 0.6</diffuse></material>
+      </visual>
+      <!-- North Vent Flap / Louver Opening -->
+      <visual name="bay3_vent_flap_north">
+        <pose>0 10.45 6.75 -0.52 0 0</pose>
+        <geometry><box><size>58.0 0.65 0.03</size></box></geometry>
+        <material><ambient>0.82 0.9 0.95 0.6</ambient><diffuse>0.85 0.92 0.98 0.6</diffuse></material>
+      </visual>
+      <!-- Vent Support Posts -->
+      <visual name="bay3_vent_posts">
+        <pose>0 10.0 6.75 0 0 0</pose>
+        <geometry><box><size>58.0 0.08 0.5</size></box></geometry>
+        <material><ambient>0.4 0.45 0.5 1</ambient><diffuse>0.5 0.55 0.6 1</diffuse></material>
+      </visual>
+
+    </link>
+  </model>
+</sdf>

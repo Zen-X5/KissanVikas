@@ -1,0 +1,329 @@
+<?xml version="1.0" ?>
+<sdf version="1.9">
+  <world name="polyhouse_world">
+    <!-- Physics Configuration (Fast & Smooth) -->
+    <physics name="1ms" type="ignored">
+      <max_step_size>0.002</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+
+    <!-- Plugins for Gazebo Harmonic -->
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics" />
+    <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands" />
+    <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster" />
+    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+
+    <!-- Scene & Optimized Lighting (No multi-pass shadow lag) -->
+    <scene>
+      <ambient>0.75 0.78 0.8 1.0</ambient>
+      <background>0.7 0.85 0.95 1.0</background>
+      <shadows>false</shadows>
+      <grid>false</grid>
+    </scene>
+
+    <!-- Directional Sun (Fast) -->
+    <light type="directional" name="sun">
+      <cast_shadows>false</cast_shadows>
+      <pose>15 -20 35 0.5 0.3 -0.8</pose>
+      <diffuse>0.92 0.92 0.88 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <direction>-0.3 0.4 -0.85</direction>
+    </light>
+
+    <!-- Ground Plane & Walkways -->
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="ground_link">
+        <collision name="ground_collision">
+          <geometry><plane><normal>0 0 1</normal><size>150 150</size></plane></geometry>
+        </collision>
+        <visual name="ground_visual">
+          <geometry><plane><normal>0 0 1</normal><size>150 150</size></plane></geometry>
+          <material><ambient>0.32 0.45 0.25 1</ambient><diffuse>0.38 0.52 0.3 1</diffuse></material>
+        </visual>
+        <visual name="polyhouse_floor">
+          <pose>0 0 0.005 0 0 0</pose>
+          <geometry><box><size>60.2 30.2 0.01</size></box></geometry>
+          <material><ambient>0.28 0.22 0.18 1</ambient><diffuse>0.34 0.27 0.22 1</diffuse></material>
+        </visual>
+        <visual name="main_walkway_longitudinal">
+          <pose>0 0 0.015 0 0 0</pose>
+          <geometry><box><size>60.0 3.0 0.02</size></box></geometry>
+          <material><ambient>0.65 0.67 0.68 1</ambient><diffuse>0.75 0.77 0.78 1</diffuse></material>
+        </visual>
+        <visual name="main_walkway_transverse">
+          <pose>0 0 0.016 0 0 0</pose>
+          <geometry><box><size>3.0 30.0 0.02</size></box></geometry>
+          <material><ambient>0.65 0.67 0.68 1</ambient><diffuse>0.75 0.77 0.78 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Polyhouse Structures -->
+    <include><uri>model://polyhouse_structure</uri><name>polyhouse_main</name><pose>0 0 0 0 0 0</pose></include>
+    <include><uri>model://polyhouse_covering</uri><name>polyhouse_covering_main</name><pose>0 0 0 0 0 0</pose></include>
+    <include><uri>model://rooftop_ventilation</uri><name>polyhouse_ventilation_system</name><pose>0 0 0 0 0 0</pose></include>
+
+    <!-- Survey Quadcopter Drone (Spawned at Takeoff Pad) -->
+    <include><uri>model://survey_drone</uri><name>survey_drone</name><pose>-33.0 0 0.1 0 0 0</pose></include>
+
+    <!-- ========================================== -->
+    <!-- ZONE: TOMATO_ZONE_01 -->
+    <!-- ========================================== -->
+    <include>
+      <uri>model://tomato_bed</uri>
+      <name>tomato_bed_001</name>
+      <pose>-20.5 3.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://tomato_bed</uri>
+      <name>tomato_bed_002</name>
+      <pose>-8.5 3.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://tomato_bed</uri>
+      <name>tomato_bed_003</name>
+      <pose>-20.5 5.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://tomato_bed</uri>
+      <name>tomato_bed_004</name>
+      <pose>-8.5 5.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://tomato_bed</uri>
+      <name>tomato_bed_005</name>
+      <pose>-20.5 7.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://tomato_bed</uri>
+      <name>tomato_bed_006</name>
+      <pose>-8.5 7.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://tomato_bed</uri>
+      <name>tomato_bed_007</name>
+      <pose>-20.5 9.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://tomato_bed</uri>
+      <name>tomato_bed_008</name>
+      <pose>-8.5 9.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://tomato_bed</uri>
+      <name>tomato_bed_009</name>
+      <pose>-20.5 11.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://tomato_bed</uri>
+      <name>tomato_bed_010</name>
+      <pose>-8.5 11.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://tomato_bed</uri>
+      <name>tomato_bed_011</name>
+      <pose>-20.5 13.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://tomato_bed</uri>
+      <name>tomato_bed_012</name>
+      <pose>-8.5 13.5 0 0 0 0</pose>
+    </include>
+
+    <!-- ========================================== -->
+    <!-- ZONE: CAPSICUM_ZONE_01 -->
+    <!-- ========================================== -->
+    <include>
+      <uri>model://capsicum_bed</uri>
+      <name>capsicum_bed_001</name>
+      <pose>8.5 3.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://capsicum_bed</uri>
+      <name>capsicum_bed_002</name>
+      <pose>20.5 3.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://capsicum_bed</uri>
+      <name>capsicum_bed_003</name>
+      <pose>8.5 5.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://capsicum_bed</uri>
+      <name>capsicum_bed_004</name>
+      <pose>20.5 5.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://capsicum_bed</uri>
+      <name>capsicum_bed_005</name>
+      <pose>8.5 7.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://capsicum_bed</uri>
+      <name>capsicum_bed_006</name>
+      <pose>20.5 7.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://capsicum_bed</uri>
+      <name>capsicum_bed_007</name>
+      <pose>8.5 9.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://capsicum_bed</uri>
+      <name>capsicum_bed_008</name>
+      <pose>20.5 9.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://capsicum_bed</uri>
+      <name>capsicum_bed_009</name>
+      <pose>8.5 11.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://capsicum_bed</uri>
+      <name>capsicum_bed_010</name>
+      <pose>20.5 11.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://capsicum_bed</uri>
+      <name>capsicum_bed_011</name>
+      <pose>8.5 13.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://capsicum_bed</uri>
+      <name>capsicum_bed_012</name>
+      <pose>20.5 13.5 0 0 0 0</pose>
+    </include>
+
+    <!-- ========================================== -->
+    <!-- ZONE: CUCUMBER_ZONE_01 -->
+    <!-- ========================================== -->
+    <include>
+      <uri>model://cucumber_bed</uri>
+      <name>cucumber_bed_001</name>
+      <pose>-20.5 -13.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://cucumber_bed</uri>
+      <name>cucumber_bed_002</name>
+      <pose>-8.5 -13.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://cucumber_bed</uri>
+      <name>cucumber_bed_003</name>
+      <pose>-20.5 -11.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://cucumber_bed</uri>
+      <name>cucumber_bed_004</name>
+      <pose>-8.5 -11.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://cucumber_bed</uri>
+      <name>cucumber_bed_005</name>
+      <pose>-20.5 -9.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://cucumber_bed</uri>
+      <name>cucumber_bed_006</name>
+      <pose>-8.5 -9.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://cucumber_bed</uri>
+      <name>cucumber_bed_007</name>
+      <pose>-20.5 -7.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://cucumber_bed</uri>
+      <name>cucumber_bed_008</name>
+      <pose>-8.5 -7.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://cucumber_bed</uri>
+      <name>cucumber_bed_009</name>
+      <pose>-20.5 -5.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://cucumber_bed</uri>
+      <name>cucumber_bed_010</name>
+      <pose>-8.5 -5.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://cucumber_bed</uri>
+      <name>cucumber_bed_011</name>
+      <pose>-20.5 -3.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://cucumber_bed</uri>
+      <name>cucumber_bed_012</name>
+      <pose>-8.5 -3.5 0 0 0 0</pose>
+    </include>
+
+    <!-- ========================================== -->
+    <!-- ZONE: EGGPLANT_ZONE_01 -->
+    <!-- ========================================== -->
+    <include>
+      <uri>model://eggplant_bed</uri>
+      <name>eggplant_bed_001</name>
+      <pose>8.5 -13.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://eggplant_bed</uri>
+      <name>eggplant_bed_002</name>
+      <pose>20.5 -13.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://eggplant_bed</uri>
+      <name>eggplant_bed_003</name>
+      <pose>8.5 -11.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://eggplant_bed</uri>
+      <name>eggplant_bed_004</name>
+      <pose>20.5 -11.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://eggplant_bed</uri>
+      <name>eggplant_bed_005</name>
+      <pose>8.5 -9.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://eggplant_bed</uri>
+      <name>eggplant_bed_006</name>
+      <pose>20.5 -9.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://eggplant_bed</uri>
+      <name>eggplant_bed_007</name>
+      <pose>8.5 -7.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://eggplant_bed</uri>
+      <name>eggplant_bed_008</name>
+      <pose>20.5 -7.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://eggplant_bed</uri>
+      <name>eggplant_bed_009</name>
+      <pose>8.5 -5.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://eggplant_bed</uri>
+      <name>eggplant_bed_010</name>
+      <pose>20.5 -5.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://eggplant_bed</uri>
+      <name>eggplant_bed_011</name>
+      <pose>8.5 -3.5 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://eggplant_bed</uri>
+      <name>eggplant_bed_012</name>
+      <pose>20.5 -3.5 0 0 0 0</pose>
+    </include>
+
+  </world>
+</sdf>

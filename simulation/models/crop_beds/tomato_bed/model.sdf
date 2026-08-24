@@ -1,0 +1,99 @@
+<?xml version="1.0" ?>
+<sdf version="1.9">
+  <model name="tomato_bed">
+    <static>true</static>
+    <link name="bed_link">
+      <pose>0 0 0 0 0 0</pose>
+      <!-- Raised Bed Soil & Structure -->
+      <visual name="soil_surface">
+        <pose>0 0 0.12 0 0 0</pose>
+        <geometry><box><size>11.4 1.1 0.22</size></box></geometry>
+        <material><ambient>0.2 0.14 0.09 1</ambient><diffuse>0.26 0.18 0.12 1</diffuse></material>
+      </visual>
+      <visual name="mulch_strip">
+        <pose>0 0 0.235 0 0 0</pose>
+        <geometry><box><size>11.3 0.95 0.01</size></box></geometry>
+        <material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.15 0.15 0.15 1</diffuse></material>
+      </visual>
+      <visual name="border_left">
+        <pose>0 -0.58 0.125 0 0 0</pose>
+        <geometry><box><size>11.5 0.06 0.25</size></box></geometry>
+        <material><ambient>0.45 0.47 0.5 1</ambient><diffuse>0.55 0.57 0.6 1</diffuse></material>
+      </visual>
+      <visual name="border_right">
+        <pose>0 0.58 0.125 0 0 0</pose>
+        <geometry><box><size>11.5 0.06 0.25</size></box></geometry>
+        <material><ambient>0.45 0.47 0.5 1</ambient><diffuse>0.55 0.57 0.6 1</diffuse></material>
+      </visual>
+      <visual name="stake_1"><pose>-4.5 0 1.05 0 0 0</pose><geometry><cylinder><radius>0.015</radius><length>1.7</length></cylinder></geometry><material><ambient>0.7 0.6 0.45 1</ambient><diffuse>0.8 0.68 0.5 1</diffuse></material></visual>
+      <visual name="canopy_low_1"><pose>-4.5 0 0.65 0 0 0.78</pose><geometry><box><size>0.65 0.65 0.35</size></box></geometry><material><ambient>0.15 0.48 0.15 1</ambient><diffuse>0.22 0.58 0.22 1</diffuse></material></visual>
+      <visual name="canopy_mid_1"><pose>-4.5 0 1.1 0 0 0.35</pose><geometry><box><size>0.68 0.68 0.4</size></box></geometry><material><ambient>0.18 0.52 0.18 1</ambient><diffuse>0.26 0.65 0.26 1</diffuse></material></visual>
+      <visual name="canopy_top_1"><pose>-4.5 0 1.55 0 0 1.1</pose><geometry><box><size>0.55 0.55 0.35</size></box></geometry><material><ambient>0.2 0.58 0.2 1</ambient><diffuse>0.3 0.72 0.3 1</diffuse></material></visual>
+      <visual name="fruit_top_1"><pose>-4.34 0.15 1.5 0 0 0</pose><geometry><sphere><radius>0.08</radius></sphere></geometry><material><ambient>0.9 0.06 0.06 1</ambient><diffuse>0.98 0.1 0.1 1</diffuse></material></visual>
+      <visual name="fruit_mid_1"><pose>-4.68 -0.15 1.1 0 0 0</pose><geometry><sphere><radius>0.085</radius></sphere></geometry><material><ambient>0.9 0.06 0.06 1</ambient><diffuse>0.98 0.1 0.1 1</diffuse></material></visual>
+      <visual name="fruit_low_1"><pose>-4.32 -0.18 0.7 0 0 0</pose><geometry><sphere><radius>0.08</radius></sphere></geometry><material><ambient>0.88 0.08 0.08 1</ambient><diffuse>0.95 0.12 0.12 1</diffuse></material></visual>
+      <visual name="blossom_1"><pose>-4.62 0.2 1.6 0 0 0</pose><geometry><sphere><radius>0.04</radius></sphere></geometry><material><ambient>0.98 0.9 0.1 1</ambient><diffuse>1.0 0.95 0.15 1</diffuse></material></visual>
+      <visual name="stake_2"><pose>-3.2 0 1.05 0 0 0</pose><geometry><cylinder><radius>0.015</radius><length>1.7</length></cylinder></geometry><material><ambient>0.7 0.6 0.45 1</ambient><diffuse>0.8 0.68 0.5 1</diffuse></material></visual>
+      <visual name="canopy_low_2"><pose>-3.2 0 0.65 0 0 0.78</pose><geometry><box><size>0.65 0.65 0.35</size></box></geometry><material><ambient>0.15 0.48 0.15 1</ambient><diffuse>0.22 0.58 0.22 1</diffuse></material></visual>
+      <visual name="canopy_mid_2"><pose>-3.2 0 1.1 0 0 0.35</pose><geometry><box><size>0.68 0.68 0.4</size></box></geometry><material><ambient>0.18 0.52 0.18 1</ambient><diffuse>0.26 0.65 0.26 1</diffuse></material></visual>
+      <visual name="canopy_top_2"><pose>-3.2 0 1.55 0 0 1.1</pose><geometry><box><size>0.55 0.55 0.35</size></box></geometry><material><ambient>0.2 0.58 0.2 1</ambient><diffuse>0.3 0.72 0.3 1</diffuse></material></visual>
+      <visual name="fruit_top_2"><pose>-3.04 0.15 1.5 0 0 0</pose><geometry><sphere><radius>0.08</radius></sphere></geometry><material><ambient>0.9 0.06 0.06 1</ambient><diffuse>0.98 0.1 0.1 1</diffuse></material></visual>
+      <visual name="fruit_mid_2"><pose>-3.3800000000000003 -0.15 1.1 0 0 0</pose><geometry><sphere><radius>0.085</radius></sphere></geometry><material><ambient>0.9 0.06 0.06 1</ambient><diffuse>0.98 0.1 0.1 1</diffuse></material></visual>
+      <visual name="fruit_low_2"><pose>-3.02 -0.18 0.7 0 0 0</pose><geometry><sphere><radius>0.08</radius></sphere></geometry><material><ambient>0.88 0.08 0.08 1</ambient><diffuse>0.95 0.12 0.12 1</diffuse></material></visual>
+      <visual name="blossom_2"><pose>-3.3200000000000003 0.2 1.6 0 0 0</pose><geometry><sphere><radius>0.04</radius></sphere></geometry><material><ambient>0.98 0.9 0.1 1</ambient><diffuse>1.0 0.95 0.15 1</diffuse></material></visual>
+      <visual name="stake_3"><pose>-1.9 0 1.05 0 0 0</pose><geometry><cylinder><radius>0.015</radius><length>1.7</length></cylinder></geometry><material><ambient>0.7 0.6 0.45 1</ambient><diffuse>0.8 0.68 0.5 1</diffuse></material></visual>
+      <visual name="canopy_low_3"><pose>-1.9 0 0.65 0 0 0.78</pose><geometry><box><size>0.65 0.65 0.35</size></box></geometry><material><ambient>0.15 0.48 0.15 1</ambient><diffuse>0.22 0.58 0.22 1</diffuse></material></visual>
+      <visual name="canopy_mid_3"><pose>-1.9 0 1.1 0 0 0.35</pose><geometry><box><size>0.68 0.68 0.4</size></box></geometry><material><ambient>0.18 0.52 0.18 1</ambient><diffuse>0.26 0.65 0.26 1</diffuse></material></visual>
+      <visual name="canopy_top_3"><pose>-1.9 0 1.55 0 0 1.1</pose><geometry><box><size>0.55 0.55 0.35</size></box></geometry><material><ambient>0.2 0.58 0.2 1</ambient><diffuse>0.3 0.72 0.3 1</diffuse></material></visual>
+      <visual name="fruit_top_3"><pose>-1.74 0.15 1.5 0 0 0</pose><geometry><sphere><radius>0.08</radius></sphere></geometry><material><ambient>0.9 0.06 0.06 1</ambient><diffuse>0.98 0.1 0.1 1</diffuse></material></visual>
+      <visual name="fruit_mid_3"><pose>-2.08 -0.15 1.1 0 0 0</pose><geometry><sphere><radius>0.085</radius></sphere></geometry><material><ambient>0.9 0.06 0.06 1</ambient><diffuse>0.98 0.1 0.1 1</diffuse></material></visual>
+      <visual name="fruit_low_3"><pose>-1.72 -0.18 0.7 0 0 0</pose><geometry><sphere><radius>0.08</radius></sphere></geometry><material><ambient>0.88 0.08 0.08 1</ambient><diffuse>0.95 0.12 0.12 1</diffuse></material></visual>
+      <visual name="blossom_3"><pose>-2.02 0.2 1.6 0 0 0</pose><geometry><sphere><radius>0.04</radius></sphere></geometry><material><ambient>0.98 0.9 0.1 1</ambient><diffuse>1.0 0.95 0.15 1</diffuse></material></visual>
+      <visual name="stake_4"><pose>-0.6 0 1.05 0 0 0</pose><geometry><cylinder><radius>0.015</radius><length>1.7</length></cylinder></geometry><material><ambient>0.7 0.6 0.45 1</ambient><diffuse>0.8 0.68 0.5 1</diffuse></material></visual>
+      <visual name="canopy_low_4"><pose>-0.6 0 0.65 0 0 0.78</pose><geometry><box><size>0.65 0.65 0.35</size></box></geometry><material><ambient>0.15 0.48 0.15 1</ambient><diffuse>0.22 0.58 0.22 1</diffuse></material></visual>
+      <visual name="canopy_mid_4"><pose>-0.6 0 1.1 0 0 0.35</pose><geometry><box><size>0.68 0.68 0.4</size></box></geometry><material><ambient>0.18 0.52 0.18 1</ambient><diffuse>0.26 0.65 0.26 1</diffuse></material></visual>
+      <visual name="canopy_top_4"><pose>-0.6 0 1.55 0 0 1.1</pose><geometry><box><size>0.55 0.55 0.35</size></box></geometry><material><ambient>0.2 0.58 0.2 1</ambient><diffuse>0.3 0.72 0.3 1</diffuse></material></visual>
+      <visual name="fruit_top_4"><pose>-0.43999999999999995 0.15 1.5 0 0 0</pose><geometry><sphere><radius>0.08</radius></sphere></geometry><material><ambient>0.9 0.06 0.06 1</ambient><diffuse>0.98 0.1 0.1 1</diffuse></material></visual>
+      <visual name="fruit_mid_4"><pose>-0.78 -0.15 1.1 0 0 0</pose><geometry><sphere><radius>0.085</radius></sphere></geometry><material><ambient>0.9 0.06 0.06 1</ambient><diffuse>0.98 0.1 0.1 1</diffuse></material></visual>
+      <visual name="fruit_low_4"><pose>-0.42 -0.18 0.7 0 0 0</pose><geometry><sphere><radius>0.08</radius></sphere></geometry><material><ambient>0.88 0.08 0.08 1</ambient><diffuse>0.95 0.12 0.12 1</diffuse></material></visual>
+      <visual name="blossom_4"><pose>-0.72 0.2 1.6 0 0 0</pose><geometry><sphere><radius>0.04</radius></sphere></geometry><material><ambient>0.98 0.9 0.1 1</ambient><diffuse>1.0 0.95 0.15 1</diffuse></material></visual>
+      <visual name="stake_5"><pose>0.7 0 1.05 0 0 0</pose><geometry><cylinder><radius>0.015</radius><length>1.7</length></cylinder></geometry><material><ambient>0.7 0.6 0.45 1</ambient><diffuse>0.8 0.68 0.5 1</diffuse></material></visual>
+      <visual name="canopy_low_5"><pose>0.7 0 0.65 0 0 0.78</pose><geometry><box><size>0.65 0.65 0.35</size></box></geometry><material><ambient>0.15 0.48 0.15 1</ambient><diffuse>0.22 0.58 0.22 1</diffuse></material></visual>
+      <visual name="canopy_mid_5"><pose>0.7 0 1.1 0 0 0.35</pose><geometry><box><size>0.68 0.68 0.4</size></box></geometry><material><ambient>0.18 0.52 0.18 1</ambient><diffuse>0.26 0.65 0.26 1</diffuse></material></visual>
+      <visual name="canopy_top_5"><pose>0.7 0 1.55 0 0 1.1</pose><geometry><box><size>0.55 0.55 0.35</size></box></geometry><material><ambient>0.2 0.58 0.2 1</ambient><diffuse>0.3 0.72 0.3 1</diffuse></material></visual>
+      <visual name="fruit_top_5"><pose>0.86 0.15 1.5 0 0 0</pose><geometry><sphere><radius>0.08</radius></sphere></geometry><material><ambient>0.9 0.06 0.06 1</ambient><diffuse>0.98 0.1 0.1 1</diffuse></material></visual>
+      <visual name="fruit_mid_5"><pose>0.52 -0.15 1.1 0 0 0</pose><geometry><sphere><radius>0.085</radius></sphere></geometry><material><ambient>0.9 0.06 0.06 1</ambient><diffuse>0.98 0.1 0.1 1</diffuse></material></visual>
+      <visual name="fruit_low_5"><pose>0.8799999999999999 -0.18 0.7 0 0 0</pose><geometry><sphere><radius>0.08</radius></sphere></geometry><material><ambient>0.88 0.08 0.08 1</ambient><diffuse>0.95 0.12 0.12 1</diffuse></material></visual>
+      <visual name="blossom_5"><pose>0.58 0.2 1.6 0 0 0</pose><geometry><sphere><radius>0.04</radius></sphere></geometry><material><ambient>0.98 0.9 0.1 1</ambient><diffuse>1.0 0.95 0.15 1</diffuse></material></visual>
+      <visual name="stake_6"><pose>2.0 0 1.05 0 0 0</pose><geometry><cylinder><radius>0.015</radius><length>1.7</length></cylinder></geometry><material><ambient>0.7 0.6 0.45 1</ambient><diffuse>0.8 0.68 0.5 1</diffuse></material></visual>
+      <visual name="canopy_low_6"><pose>2.0 0 0.65 0 0 0.78</pose><geometry><box><size>0.65 0.65 0.35</size></box></geometry><material><ambient>0.15 0.48 0.15 1</ambient><diffuse>0.22 0.58 0.22 1</diffuse></material></visual>
+      <visual name="canopy_mid_6"><pose>2.0 0 1.1 0 0 0.35</pose><geometry><box><size>0.68 0.68 0.4</size></box></geometry><material><ambient>0.18 0.52 0.18 1</ambient><diffuse>0.26 0.65 0.26 1</diffuse></material></visual>
+      <visual name="canopy_top_6"><pose>2.0 0 1.55 0 0 1.1</pose><geometry><box><size>0.55 0.55 0.35</size></box></geometry><material><ambient>0.2 0.58 0.2 1</ambient><diffuse>0.3 0.72 0.3 1</diffuse></material></visual>
+      <visual name="fruit_top_6"><pose>2.16 0.15 1.5 0 0 0</pose><geometry><sphere><radius>0.08</radius></sphere></geometry><material><ambient>0.9 0.06 0.06 1</ambient><diffuse>0.98 0.1 0.1 1</diffuse></material></visual>
+      <visual name="fruit_mid_6"><pose>1.82 -0.15 1.1 0 0 0</pose><geometry><sphere><radius>0.085</radius></sphere></geometry><material><ambient>0.9 0.06 0.06 1</ambient><diffuse>0.98 0.1 0.1 1</diffuse></material></visual>
+      <visual name="fruit_low_6"><pose>2.18 -0.18 0.7 0 0 0</pose><geometry><sphere><radius>0.08</radius></sphere></geometry><material><ambient>0.88 0.08 0.08 1</ambient><diffuse>0.95 0.12 0.12 1</diffuse></material></visual>
+      <visual name="blossom_6"><pose>1.88 0.2 1.6 0 0 0</pose><geometry><sphere><radius>0.04</radius></sphere></geometry><material><ambient>0.98 0.9 0.1 1</ambient><diffuse>1.0 0.95 0.15 1</diffuse></material></visual>
+      <visual name="stake_7"><pose>3.3 0 1.05 0 0 0</pose><geometry><cylinder><radius>0.015</radius><length>1.7</length></cylinder></geometry><material><ambient>0.7 0.6 0.45 1</ambient><diffuse>0.8 0.68 0.5 1</diffuse></material></visual>
+      <visual name="canopy_low_7"><pose>3.3 0 0.65 0 0 0.78</pose><geometry><box><size>0.65 0.65 0.35</size></box></geometry><material><ambient>0.15 0.48 0.15 1</ambient><diffuse>0.22 0.58 0.22 1</diffuse></material></visual>
+      <visual name="canopy_mid_7"><pose>3.3 0 1.1 0 0 0.35</pose><geometry><box><size>0.68 0.68 0.4</size></box></geometry><material><ambient>0.18 0.52 0.18 1</ambient><diffuse>0.26 0.65 0.26 1</diffuse></material></visual>
+      <visual name="canopy_top_7"><pose>3.3 0 1.55 0 0 1.1</pose><geometry><box><size>0.55 0.55 0.35</size></box></geometry><material><ambient>0.2 0.58 0.2 1</ambient><diffuse>0.3 0.72 0.3 1</diffuse></material></visual>
+      <visual name="fruit_top_7"><pose>3.46 0.15 1.5 0 0 0</pose><geometry><sphere><radius>0.08</radius></sphere></geometry><material><ambient>0.9 0.06 0.06 1</ambient><diffuse>0.98 0.1 0.1 1</diffuse></material></visual>
+      <visual name="fruit_mid_7"><pose>3.1199999999999997 -0.15 1.1 0 0 0</pose><geometry><sphere><radius>0.085</radius></sphere></geometry><material><ambient>0.9 0.06 0.06 1</ambient><diffuse>0.98 0.1 0.1 1</diffuse></material></visual>
+      <visual name="fruit_low_7"><pose>3.48 -0.18 0.7 0 0 0</pose><geometry><sphere><radius>0.08</radius></sphere></geometry><material><ambient>0.88 0.08 0.08 1</ambient><diffuse>0.95 0.12 0.12 1</diffuse></material></visual>
+      <visual name="blossom_7"><pose>3.1799999999999997 0.2 1.6 0 0 0</pose><geometry><sphere><radius>0.04</radius></sphere></geometry><material><ambient>0.98 0.9 0.1 1</ambient><diffuse>1.0 0.95 0.15 1</diffuse></material></visual>
+      <visual name="stake_8"><pose>4.5 0 1.05 0 0 0</pose><geometry><cylinder><radius>0.015</radius><length>1.7</length></cylinder></geometry><material><ambient>0.7 0.6 0.45 1</ambient><diffuse>0.8 0.68 0.5 1</diffuse></material></visual>
+      <visual name="canopy_low_8"><pose>4.5 0 0.65 0 0 0.78</pose><geometry><box><size>0.65 0.65 0.35</size></box></geometry><material><ambient>0.15 0.48 0.15 1</ambient><diffuse>0.22 0.58 0.22 1</diffuse></material></visual>
+      <visual name="canopy_mid_8"><pose>4.5 0 1.1 0 0 0.35</pose><geometry><box><size>0.68 0.68 0.4</size></box></geometry><material><ambient>0.18 0.52 0.18 1</ambient><diffuse>0.26 0.65 0.26 1</diffuse></material></visual>
+      <visual name="canopy_top_8"><pose>4.5 0 1.55 0 0 1.1</pose><geometry><box><size>0.55 0.55 0.35</size></box></geometry><material><ambient>0.2 0.58 0.2 1</ambient><diffuse>0.3 0.72 0.3 1</diffuse></material></visual>
+      <visual name="fruit_top_8"><pose>4.66 0.15 1.5 0 0 0</pose><geometry><sphere><radius>0.08</radius></sphere></geometry><material><ambient>0.9 0.06 0.06 1</ambient><diffuse>0.98 0.1 0.1 1</diffuse></material></visual>
+      <visual name="fruit_mid_8"><pose>4.32 -0.15 1.1 0 0 0</pose><geometry><sphere><radius>0.085</radius></sphere></geometry><material><ambient>0.9 0.06 0.06 1</ambient><diffuse>0.98 0.1 0.1 1</diffuse></material></visual>
+      <visual name="fruit_low_8"><pose>4.68 -0.18 0.7 0 0 0</pose><geometry><sphere><radius>0.08</radius></sphere></geometry><material><ambient>0.88 0.08 0.08 1</ambient><diffuse>0.95 0.12 0.12 1</diffuse></material></visual>
+      <visual name="blossom_8"><pose>4.38 0.2 1.6 0 0 0</pose><geometry><sphere><radius>0.04</radius></sphere></geometry><material><ambient>0.98 0.9 0.1 1</ambient><diffuse>1.0 0.95 0.15 1</diffuse></material></visual>
+      <!-- Single Bed Physics Collision -->
+      <collision name="bed_col">
+        <pose>0 0 0.5 0 0 0</pose>
+        <geometry><box><size>11.5 1.2 1.0</size></box></geometry>
+      </collision>
+    </link>
+  </model>
+</sdf>

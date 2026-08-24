@@ -1,0 +1,74 @@
+<?xml version="1.0" ?>
+<sdf version="1.9">
+  <model name="eggplant_plant">
+    <static>true</static>
+
+    <link name="plant_link">
+      <pose>0 0 0 0 0 0</pose>
+
+      <!-- Main Stem & Woody Base -->
+      <visual name="main_stem">
+        <pose>0 0 0.32 0 0 0</pose>
+        <geometry><cylinder><radius>0.028</radius><length>0.65</length></cylinder></geometry>
+        <material><ambient>0.3 0.35 0.22 1</ambient><diffuse>0.4 0.46 0.28 1</diffuse></material>
+      </visual>
+
+      <!-- Broad Velvety Olive/Sage Green Canopy -->
+      <visual name="canopy_lower">
+        <pose>0 0 0.42 0 0 0.8</pose>
+        <geometry><box><size>0.82 0.82 0.32</size></box></geometry>
+        <material><ambient>0.2 0.32 0.18 1</ambient><diffuse>0.28 0.42 0.24 1</diffuse><roughness>0.85</roughness></material>
+      </visual>
+
+      <visual name="canopy_upper">
+        <pose>0 0 0.76 0 0 0.2</pose>
+        <geometry><box><size>0.68 0.68 0.36</size></box></geometry>
+        <material><ambient>0.24 0.36 0.2 1</ambient><diffuse>0.32 0.48 0.28 1</diffuse><roughness>0.85</roughness></material>
+      </visual>
+
+      <!-- Prominent Glossy Deep Purple Eggplants (Highly Distinguishable for Aerial Camera) -->
+      <!-- Top/Upper Purple Fruit -->
+      <visual name="eggplant_fruit_top">
+        <pose>0.18 0.14 0.65 0.3 0 0</pose>
+        <geometry><cylinder><radius>0.08</radius><length>0.24</length></cylinder></geometry>
+        <material><ambient>0.2 0.02 0.38 1</ambient><diffuse>0.32 0.04 0.58 1</diffuse><specular>0.8 0.8 0.8 1</specular></material>
+      </visual>
+      <visual name="eggplant_calyx_top">
+        <pose>0.18 0.14 0.78 0 0 0</pose>
+        <geometry><cylinder><radius>0.045</radius><length>0.05</length></cylinder></geometry>
+        <material><ambient>0.2 0.5 0.2 1</ambient><diffuse>0.28 0.65 0.28 1</diffuse></material>
+      </visual>
+
+      <!-- Mid Purple Fruit (Opposite Side) -->
+      <visual name="eggplant_fruit_mid">
+        <pose>-0.2 -0.16 0.55 -0.3 0 0</pose>
+        <geometry><cylinder><radius>0.078</radius><length>0.24</length></cylinder></geometry>
+        <material><ambient>0.2 0.02 0.38 1</ambient><diffuse>0.32 0.04 0.58 1</diffuse><specular>0.8 0.8 0.8 1</specular></material>
+      </visual>
+      <visual name="eggplant_calyx_mid">
+        <pose>-0.2 -0.16 0.68 0 0 0</pose>
+        <geometry><cylinder><radius>0.045</radius><length>0.05</length></cylinder></geometry>
+        <material><ambient>0.2 0.5 0.2 1</ambient><diffuse>0.28 0.65 0.28 1</diffuse></material>
+      </visual>
+
+      <!-- Side Purple Fruit -->
+      <visual name="eggplant_fruit_side">
+        <pose>0.22 -0.18 0.45 0 0.3 0</pose>
+        <geometry><cylinder><radius>0.075</radius><length>0.22</length></cylinder></geometry>
+        <material><ambient>0.2 0.02 0.38 1</ambient><diffuse>0.32 0.04 0.58 1</diffuse><specular>0.8 0.8 0.8 1</specular></material>
+      </visual>
+
+      <!-- Violet Star Flower -->
+      <visual name="eggplant_flower">
+        <pose>-0.12 0.2 0.82 0 0 0</pose>
+        <geometry><sphere><radius>0.04</radius></sphere></geometry>
+        <material><ambient>0.6 0.3 0.8 1</ambient><diffuse>0.75 0.4 0.95 1</diffuse></material>
+      </visual>
+
+      <collision name="plant_collision">
+        <pose>0 0 0.55 0 0 0</pose>
+        <geometry><cylinder><radius>0.42</radius><length>1.1</length></cylinder></geometry>
+      </collision>
+    </link>
+  </model>
+</sdf>
