@@ -1,10 +1,10 @@
 import httpx
 import numpy as np
-import cv2#This function downloads an image from a URL and returns it as a NumPy array.
+import cv2
 
 
 async def load_image_from_url(url: str) -> np.ndarray:
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(follow_redirects=True) as client:
         response = await client.get(url)
 
     response.raise_for_status()
