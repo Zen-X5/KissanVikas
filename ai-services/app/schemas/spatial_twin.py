@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import List, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class ObjectType(str, Enum):
@@ -18,9 +18,9 @@ class ObjectType(str, Enum):
 class RelationshipType(str, Enum):
     BELONGS_TO = "belongs_to"
     INSIDE = "inside"
+    CONTAINS = "contains"
     CONNECTED_TO = "connected_to"
     NEAR = "near"
-
 
 
 # Represents where an object is physically located
@@ -29,6 +29,21 @@ class SpatialPosition(BaseModel):
     x_m: float
     y_m: float
     z_m: float
+
+
+# Represents the physical size of an object
+# inside the polyhouse.
+class SpatialDimensions(BaseModel):
+    width_m: float
+    depth_m: float
+    height_m: float
+
+
+# Represents the physical rotation of an object.
+class SpatialOrientation(BaseModel):
+    roll_deg: float
+    pitch_deg: float
+    yaw_deg: float
 
 
 # Represents the object's 2D location inside
@@ -40,27 +55,34 @@ class BoundingBox(BaseModel):
     y_max: float
 
 
-
 class SpatialObject(BaseModel):
-    # Example: CROP-001, BED-001, SENSOR-001
+    # Unique identifier for the object.
     id: str
 
     # Broad category of the object.
     type: ObjectType
 
     # Specific class detected by the vision model.
-    # Example: tomato, cucumber, temperature_sensor
+    # Example: tomato, cucumber, growing_bed.
     class_name: str
 
     # Confidence score produced by the AI model.
-    # Example: 0.94 = 94% confidence
     confidence: float
 
     # Real-world position inside the polyhouse.
     position: SpatialPosition
 
+    # Optional physical dimensions.
+    dimensions: Optional[SpatialDimensions] = None
+
+    # Optional physical orientation.
+    orientation: Optional[SpatialOrientation] = None
+
     # Optional 2D bounding box from the source image.
     bounding_box: Optional[BoundingBox] = None
+
+    # Drone frames in which this object was observed.
+    source_frames: List[str] = Field(default_factory=list)
 
 
 class SpatialRelationship(BaseModel):
