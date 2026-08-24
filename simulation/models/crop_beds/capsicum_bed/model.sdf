@@ -1,0 +1,75 @@
+<?xml version="1.0" ?>
+<sdf version="1.9">
+  <model name="capsicum_bed">
+    <static>true</static>
+    <link name="bed_link">
+      <pose>0 0 0 0 0 0</pose>
+      <!-- Raised Bed Soil & Structure -->
+      <visual name="soil_surface">
+        <pose>0 0 0.12 0 0 0</pose>
+        <geometry><box><size>11.4 1.1 0.22</size></box></geometry>
+        <material><ambient>0.2 0.14 0.09 1</ambient><diffuse>0.26 0.18 0.12 1</diffuse></material>
+      </visual>
+      <visual name="mulch_strip">
+        <pose>0 0 0.235 0 0 0</pose>
+        <geometry><box><size>11.3 0.95 0.01</size></box></geometry>
+        <material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.15 0.15 0.15 1</diffuse></material>
+      </visual>
+      <visual name="border_left">
+        <pose>0 -0.58 0.125 0 0 0</pose>
+        <geometry><box><size>11.5 0.06 0.25</size></box></geometry>
+        <material><ambient>0.45 0.47 0.5 1</ambient><diffuse>0.55 0.57 0.6 1</diffuse></material>
+      </visual>
+      <visual name="border_right">
+        <pose>0 0.58 0.125 0 0 0</pose>
+        <geometry><box><size>11.5 0.06 0.25</size></box></geometry>
+        <material><ambient>0.45 0.47 0.5 1</ambient><diffuse>0.55 0.57 0.6 1</diffuse></material>
+      </visual>
+      <visual name="canopy_low_1"><pose>-4.5 0 0.55 0 0 0.4</pose><geometry><box><size>0.8 0.8 0.32</size></box></geometry><material><ambient>0.06 0.35 0.08 1</ambient><diffuse>0.1 0.45 0.12 1</diffuse></material></visual>
+      <visual name="canopy_top_1"><pose>-4.5 0 0.82 0 0 1.2</pose><geometry><box><size>0.68 0.68 0.36</size></box></geometry><material><ambient>0.08 0.4 0.1 1</ambient><diffuse>0.14 0.52 0.15 1</diffuse></material></visual>
+      <visual name="pep_red_1"><pose>-4.34 0.14 0.9 0 0 0.3</pose><geometry><box><size>0.12 0.12 0.14</size></box></geometry><material><ambient>0.9 0.05 0.05 1</ambient><diffuse>0.98 0.08 0.08 1</diffuse></material></visual>
+      <visual name="pep_yel_1"><pose>-4.66 -0.15 0.88 0 0 0.8</pose><geometry><box><size>0.12 0.12 0.14</size></box></geometry><material><ambient>0.95 0.8 0.05 1</ambient><diffuse>1.0 0.9 0.1 1</diffuse></material></visual>
+      <visual name="pep_org_1"><pose>-4.68 0.16 0.7 0 0 0.4</pose><geometry><box><size>0.11 0.11 0.13</size></box></geometry><material><ambient>0.92 0.48 0.05 1</ambient><diffuse>0.98 0.58 0.08 1</diffuse></material></visual>
+      <visual name="canopy_low_2"><pose>-3.2 0 0.55 0 0 0.4</pose><geometry><box><size>0.8 0.8 0.32</size></box></geometry><material><ambient>0.06 0.35 0.08 1</ambient><diffuse>0.1 0.45 0.12 1</diffuse></material></visual>
+      <visual name="canopy_top_2"><pose>-3.2 0 0.82 0 0 1.2</pose><geometry><box><size>0.68 0.68 0.36</size></box></geometry><material><ambient>0.08 0.4 0.1 1</ambient><diffuse>0.14 0.52 0.15 1</diffuse></material></visual>
+      <visual name="pep_red_2"><pose>-3.04 0.14 0.9 0 0 0.3</pose><geometry><box><size>0.12 0.12 0.14</size></box></geometry><material><ambient>0.9 0.05 0.05 1</ambient><diffuse>0.98 0.08 0.08 1</diffuse></material></visual>
+      <visual name="pep_yel_2"><pose>-3.3600000000000003 -0.15 0.88 0 0 0.8</pose><geometry><box><size>0.12 0.12 0.14</size></box></geometry><material><ambient>0.95 0.8 0.05 1</ambient><diffuse>1.0 0.9 0.1 1</diffuse></material></visual>
+      <visual name="pep_org_2"><pose>-3.3800000000000003 0.16 0.7 0 0 0.4</pose><geometry><box><size>0.11 0.11 0.13</size></box></geometry><material><ambient>0.92 0.48 0.05 1</ambient><diffuse>0.98 0.58 0.08 1</diffuse></material></visual>
+      <visual name="canopy_low_3"><pose>-1.9 0 0.55 0 0 0.4</pose><geometry><box><size>0.8 0.8 0.32</size></box></geometry><material><ambient>0.06 0.35 0.08 1</ambient><diffuse>0.1 0.45 0.12 1</diffuse></material></visual>
+      <visual name="canopy_top_3"><pose>-1.9 0 0.82 0 0 1.2</pose><geometry><box><size>0.68 0.68 0.36</size></box></geometry><material><ambient>0.08 0.4 0.1 1</ambient><diffuse>0.14 0.52 0.15 1</diffuse></material></visual>
+      <visual name="pep_red_3"><pose>-1.74 0.14 0.9 0 0 0.3</pose><geometry><box><size>0.12 0.12 0.14</size></box></geometry><material><ambient>0.9 0.05 0.05 1</ambient><diffuse>0.98 0.08 0.08 1</diffuse></material></visual>
+      <visual name="pep_yel_3"><pose>-2.06 -0.15 0.88 0 0 0.8</pose><geometry><box><size>0.12 0.12 0.14</size></box></geometry><material><ambient>0.95 0.8 0.05 1</ambient><diffuse>1.0 0.9 0.1 1</diffuse></material></visual>
+      <visual name="pep_org_3"><pose>-2.08 0.16 0.7 0 0 0.4</pose><geometry><box><size>0.11 0.11 0.13</size></box></geometry><material><ambient>0.92 0.48 0.05 1</ambient><diffuse>0.98 0.58 0.08 1</diffuse></material></visual>
+      <visual name="canopy_low_4"><pose>-0.6 0 0.55 0 0 0.4</pose><geometry><box><size>0.8 0.8 0.32</size></box></geometry><material><ambient>0.06 0.35 0.08 1</ambient><diffuse>0.1 0.45 0.12 1</diffuse></material></visual>
+      <visual name="canopy_top_4"><pose>-0.6 0 0.82 0 0 1.2</pose><geometry><box><size>0.68 0.68 0.36</size></box></geometry><material><ambient>0.08 0.4 0.1 1</ambient><diffuse>0.14 0.52 0.15 1</diffuse></material></visual>
+      <visual name="pep_red_4"><pose>-0.43999999999999995 0.14 0.9 0 0 0.3</pose><geometry><box><size>0.12 0.12 0.14</size></box></geometry><material><ambient>0.9 0.05 0.05 1</ambient><diffuse>0.98 0.08 0.08 1</diffuse></material></visual>
+      <visual name="pep_yel_4"><pose>-0.76 -0.15 0.88 0 0 0.8</pose><geometry><box><size>0.12 0.12 0.14</size></box></geometry><material><ambient>0.95 0.8 0.05 1</ambient><diffuse>1.0 0.9 0.1 1</diffuse></material></visual>
+      <visual name="pep_org_4"><pose>-0.78 0.16 0.7 0 0 0.4</pose><geometry><box><size>0.11 0.11 0.13</size></box></geometry><material><ambient>0.92 0.48 0.05 1</ambient><diffuse>0.98 0.58 0.08 1</diffuse></material></visual>
+      <visual name="canopy_low_5"><pose>0.7 0 0.55 0 0 0.4</pose><geometry><box><size>0.8 0.8 0.32</size></box></geometry><material><ambient>0.06 0.35 0.08 1</ambient><diffuse>0.1 0.45 0.12 1</diffuse></material></visual>
+      <visual name="canopy_top_5"><pose>0.7 0 0.82 0 0 1.2</pose><geometry><box><size>0.68 0.68 0.36</size></box></geometry><material><ambient>0.08 0.4 0.1 1</ambient><diffuse>0.14 0.52 0.15 1</diffuse></material></visual>
+      <visual name="pep_red_5"><pose>0.86 0.14 0.9 0 0 0.3</pose><geometry><box><size>0.12 0.12 0.14</size></box></geometry><material><ambient>0.9 0.05 0.05 1</ambient><diffuse>0.98 0.08 0.08 1</diffuse></material></visual>
+      <visual name="pep_yel_5"><pose>0.5399999999999999 -0.15 0.88 0 0 0.8</pose><geometry><box><size>0.12 0.12 0.14</size></box></geometry><material><ambient>0.95 0.8 0.05 1</ambient><diffuse>1.0 0.9 0.1 1</diffuse></material></visual>
+      <visual name="pep_org_5"><pose>0.52 0.16 0.7 0 0 0.4</pose><geometry><box><size>0.11 0.11 0.13</size></box></geometry><material><ambient>0.92 0.48 0.05 1</ambient><diffuse>0.98 0.58 0.08 1</diffuse></material></visual>
+      <visual name="canopy_low_6"><pose>2.0 0 0.55 0 0 0.4</pose><geometry><box><size>0.8 0.8 0.32</size></box></geometry><material><ambient>0.06 0.35 0.08 1</ambient><diffuse>0.1 0.45 0.12 1</diffuse></material></visual>
+      <visual name="canopy_top_6"><pose>2.0 0 0.82 0 0 1.2</pose><geometry><box><size>0.68 0.68 0.36</size></box></geometry><material><ambient>0.08 0.4 0.1 1</ambient><diffuse>0.14 0.52 0.15 1</diffuse></material></visual>
+      <visual name="pep_red_6"><pose>2.16 0.14 0.9 0 0 0.3</pose><geometry><box><size>0.12 0.12 0.14</size></box></geometry><material><ambient>0.9 0.05 0.05 1</ambient><diffuse>0.98 0.08 0.08 1</diffuse></material></visual>
+      <visual name="pep_yel_6"><pose>1.84 -0.15 0.88 0 0 0.8</pose><geometry><box><size>0.12 0.12 0.14</size></box></geometry><material><ambient>0.95 0.8 0.05 1</ambient><diffuse>1.0 0.9 0.1 1</diffuse></material></visual>
+      <visual name="pep_org_6"><pose>1.82 0.16 0.7 0 0 0.4</pose><geometry><box><size>0.11 0.11 0.13</size></box></geometry><material><ambient>0.92 0.48 0.05 1</ambient><diffuse>0.98 0.58 0.08 1</diffuse></material></visual>
+      <visual name="canopy_low_7"><pose>3.3 0 0.55 0 0 0.4</pose><geometry><box><size>0.8 0.8 0.32</size></box></geometry><material><ambient>0.06 0.35 0.08 1</ambient><diffuse>0.1 0.45 0.12 1</diffuse></material></visual>
+      <visual name="canopy_top_7"><pose>3.3 0 0.82 0 0 1.2</pose><geometry><box><size>0.68 0.68 0.36</size></box></geometry><material><ambient>0.08 0.4 0.1 1</ambient><diffuse>0.14 0.52 0.15 1</diffuse></material></visual>
+      <visual name="pep_red_7"><pose>3.46 0.14 0.9 0 0 0.3</pose><geometry><box><size>0.12 0.12 0.14</size></box></geometry><material><ambient>0.9 0.05 0.05 1</ambient><diffuse>0.98 0.08 0.08 1</diffuse></material></visual>
+      <visual name="pep_yel_7"><pose>3.1399999999999997 -0.15 0.88 0 0 0.8</pose><geometry><box><size>0.12 0.12 0.14</size></box></geometry><material><ambient>0.95 0.8 0.05 1</ambient><diffuse>1.0 0.9 0.1 1</diffuse></material></visual>
+      <visual name="pep_org_7"><pose>3.1199999999999997 0.16 0.7 0 0 0.4</pose><geometry><box><size>0.11 0.11 0.13</size></box></geometry><material><ambient>0.92 0.48 0.05 1</ambient><diffuse>0.98 0.58 0.08 1</diffuse></material></visual>
+      <visual name="canopy_low_8"><pose>4.5 0 0.55 0 0 0.4</pose><geometry><box><size>0.8 0.8 0.32</size></box></geometry><material><ambient>0.06 0.35 0.08 1</ambient><diffuse>0.1 0.45 0.12 1</diffuse></material></visual>
+      <visual name="canopy_top_8"><pose>4.5 0 0.82 0 0 1.2</pose><geometry><box><size>0.68 0.68 0.36</size></box></geometry><material><ambient>0.08 0.4 0.1 1</ambient><diffuse>0.14 0.52 0.15 1</diffuse></material></visual>
+      <visual name="pep_red_8"><pose>4.66 0.14 0.9 0 0 0.3</pose><geometry><box><size>0.12 0.12 0.14</size></box></geometry><material><ambient>0.9 0.05 0.05 1</ambient><diffuse>0.98 0.08 0.08 1</diffuse></material></visual>
+      <visual name="pep_yel_8"><pose>4.34 -0.15 0.88 0 0 0.8</pose><geometry><box><size>0.12 0.12 0.14</size></box></geometry><material><ambient>0.95 0.8 0.05 1</ambient><diffuse>1.0 0.9 0.1 1</diffuse></material></visual>
+      <visual name="pep_org_8"><pose>4.32 0.16 0.7 0 0 0.4</pose><geometry><box><size>0.11 0.11 0.13</size></box></geometry><material><ambient>0.92 0.48 0.05 1</ambient><diffuse>0.98 0.58 0.08 1</diffuse></material></visual>
+      <!-- Single Bed Physics Collision -->
+      <collision name="bed_col">
+        <pose>0 0 0.5 0 0 0</pose>
+        <geometry><box><size>11.5 1.2 1.0</size></box></geometry>
+      </collision>
+    </link>
+  </model>
+</sdf>

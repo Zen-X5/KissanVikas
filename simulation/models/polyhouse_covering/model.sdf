@@ -1,0 +1,194 @@
+<?xml version="1.0" ?>
+<sdf version="1.9">
+  <model name="polyhouse_covering">
+    <static>true</static>
+
+    <link name="covering_link">
+      <pose>0 0 0 0 0 0</pose>
+
+      <!-- ========================================== -->
+      <!-- Side Walls (Translucent Polyethylene)      -->
+      <!-- ========================================== -->
+
+      <!-- North Wall (Y = +15.0m) -->
+      <visual name="wall_north">
+        <pose>0 15.0 2.1 0 0 0</pose>
+        <geometry><box><size>60.0 0.02 4.2</size></box></geometry>
+        <material>
+          <ambient>0.82 0.90 0.95 0.30</ambient>
+          <diffuse>0.85 0.92 0.98 0.30</diffuse>
+          <specular>0.4 0.45 0.5 1</specular>
+          <roughness>0.2</roughness>
+        </material>
+      </visual>
+
+      <!-- South Wall (Y = -15.0m) -->
+      <visual name="wall_south">
+        <pose>0 -15.0 2.1 0 0 0</pose>
+        <geometry><box><size>60.0 0.02 4.2</size></box></geometry>
+        <material>
+          <ambient>0.82 0.90 0.95 0.30</ambient>
+          <diffuse>0.85 0.92 0.98 0.30</diffuse>
+          <specular>0.4 0.45 0.5 1</specular>
+          <roughness>0.2</roughness>
+        </material>
+      </visual>
+
+      <!-- West Wall (Front, X = -30.0m) with center doorway opening -->
+      <visual name="wall_west_left">
+        <pose>-30.0 -8.3 2.1 0 0 0</pose>
+        <geometry><box><size>0.02 13.4 4.2</size></box></geometry>
+        <material>
+          <ambient>0.82 0.90 0.95 0.30</ambient>
+          <diffuse>0.85 0.92 0.98 0.30</diffuse>
+          <specular>0.4 0.45 0.5 1</specular>
+        </material>
+      </visual>
+      <visual name="wall_west_right">
+        <pose>-30.0 8.3 2.1 0 0 0</pose>
+        <geometry><box><size>0.02 13.4 4.2</size></box></geometry>
+        <material>
+          <ambient>0.82 0.90 0.95 0.30</ambient>
+          <diffuse>0.85 0.92 0.98 0.30</diffuse>
+          <specular>0.4 0.45 0.5 1</specular>
+        </material>
+      </visual>
+      <visual name="wall_west_top_transom">
+        <pose>-30.0 0 3.7 0 0 0</pose>
+        <geometry><box><size>0.02 3.2 1.0</size></box></geometry>
+        <material>
+          <ambient>0.82 0.90 0.95 0.30</ambient>
+          <diffuse>0.85 0.92 0.98 0.30</diffuse>
+        </material>
+      </visual>
+
+      <!-- East Wall (Rear, X = +30.0m) with center doorway opening -->
+      <visual name="wall_east_left">
+        <pose>30.0 -8.3 2.1 0 0 0</pose>
+        <geometry><box><size>0.02 13.4 4.2</size></box></geometry>
+        <material>
+          <ambient>0.82 0.90 0.95 0.30</ambient>
+          <diffuse>0.85 0.92 0.98 0.30</diffuse>
+          <specular>0.4 0.45 0.5 1</specular>
+        </material>
+      </visual>
+      <visual name="wall_east_right">
+        <pose>30.0 8.3 2.1 0 0 0</pose>
+        <geometry><box><size>0.02 13.4 4.2</size></box></geometry>
+        <material>
+          <ambient>0.82 0.90 0.95 0.30</ambient>
+          <diffuse>0.85 0.92 0.98 0.30</diffuse>
+          <specular>0.4 0.45 0.5 1</specular>
+        </material>
+      </visual>
+      <visual name="wall_east_top_transom">
+        <pose>30.0 0 3.7 0 0 0</pose>
+        <geometry><box><size>0.02 3.2 1.0</size></box></geometry>
+        <material>
+          <ambient>0.82 0.90 0.95 0.30</ambient>
+          <diffuse>0.85 0.92 0.98 0.30</diffuse>
+        </material>
+      </visual>
+
+      <!-- ========================================== -->
+      <!-- Gable End Polyethylene Cladding (Gables)   -->
+      <!-- ========================================== -->
+      <visual name="gable_west_bay1">
+        <pose>-30.0 -10.0 5.35 0 0 0</pose>
+        <geometry><box><size>0.02 9.8 2.2</size></box></geometry>
+        <material><ambient>0.82 0.90 0.95 0.28</ambient><diffuse>0.85 0.92 0.98 0.28</diffuse></material>
+      </visual>
+      <visual name="gable_west_bay2">
+        <pose>-30.0 0.0 5.35 0 0 0</pose>
+        <geometry><box><size>0.02 9.8 2.2</size></box></geometry>
+        <material><ambient>0.82 0.90 0.95 0.28</ambient><diffuse>0.85 0.92 0.98 0.28</diffuse></material>
+      </visual>
+      <visual name="gable_west_bay3">
+        <pose>-30.0 10.0 5.35 0 0 0</pose>
+        <geometry><box><size>0.02 9.8 2.2</size></box></geometry>
+        <material><ambient>0.82 0.90 0.95 0.28</ambient><diffuse>0.85 0.92 0.98 0.28</diffuse></material>
+      </visual>
+
+      <visual name="gable_east_bay1">
+        <pose>30.0 -10.0 5.35 0 0 0</pose>
+        <geometry><box><size>0.02 9.8 2.2</size></box></geometry>
+        <material><ambient>0.82 0.90 0.95 0.28</ambient><diffuse>0.85 0.92 0.98 0.28</diffuse></material>
+      </visual>
+      <visual name="gable_east_bay2">
+        <pose>30.0 0.0 5.35 0 0 0</pose>
+        <geometry><box><size>0.02 9.8 2.2</size></box></geometry>
+        <material><ambient>0.82 0.90 0.95 0.28</ambient><diffuse>0.85 0.92 0.98 0.28</diffuse></material>
+      </visual>
+      <visual name="gable_east_bay3">
+        <pose>30.0 10.0 5.35 0 0 0</pose>
+        <geometry><box><size>0.02 9.8 2.2</size></box></geometry>
+        <material><ambient>0.82 0.90 0.95 0.28</ambient><diffuse>0.85 0.92 0.98 0.28</diffuse></material>
+      </visual>
+
+      <!-- ========================================== -->
+      <!-- Roof Polyethylene Slopes (3 Bays)          -->
+      <!-- ========================================== -->
+
+      <!-- Bay 1 (Y: -15 to -5, Ridge: Y = -10, Z = 6.5) -->
+      <visual name="roof_bay1_south_slope">
+        <pose>0 -12.5 5.35 0.431 0 0</pose>
+        <geometry><box><size>60.0 5.50 0.015</size></box></geometry>
+        <material>
+          <ambient>0.85 0.93 0.98 0.25</ambient>
+          <diffuse>0.88 0.95 1.0 0.25</diffuse>
+          <specular>0.5 0.55 0.6 1</specular>
+        </material>
+      </visual>
+      <visual name="roof_bay1_north_slope">
+        <pose>0 -7.5 5.35 -0.431 0 0</pose>
+        <geometry><box><size>60.0 5.50 0.015</size></box></geometry>
+        <material>
+          <ambient>0.85 0.93 0.98 0.25</ambient>
+          <diffuse>0.88 0.95 1.0 0.25</diffuse>
+          <specular>0.5 0.55 0.6 1</specular>
+        </material>
+      </visual>
+
+      <!-- Bay 2 (Y: -5 to +5, Ridge: Y = 0.0, Z = 6.5) -->
+      <visual name="roof_bay2_south_slope">
+        <pose>0 -2.5 5.35 0.431 0 0</pose>
+        <geometry><box><size>60.0 5.50 0.015</size></box></geometry>
+        <material>
+          <ambient>0.85 0.93 0.98 0.25</ambient>
+          <diffuse>0.88 0.95 1.0 0.25</diffuse>
+          <specular>0.5 0.55 0.6 1</specular>
+        </material>
+      </visual>
+      <visual name="roof_bay2_north_slope">
+        <pose>0 2.5 5.35 -0.431 0 0</pose>
+        <geometry><box><size>60.0 5.50 0.015</size></box></geometry>
+        <material>
+          <ambient>0.85 0.93 0.98 0.25</ambient>
+          <diffuse>0.88 0.95 1.0 0.25</diffuse>
+          <specular>0.5 0.55 0.6 1</specular>
+        </material>
+      </visual>
+
+      <!-- Bay 3 (Y: +5 to +15, Ridge: Y = 10.0, Z = 6.5) -->
+      <visual name="roof_bay3_south_slope">
+        <pose>0 7.5 5.35 0.431 0 0</pose>
+        <geometry><box><size>60.0 5.50 0.015</size></box></geometry>
+        <material>
+          <ambient>0.85 0.93 0.98 0.25</ambient>
+          <diffuse>0.88 0.95 1.0 0.25</diffuse>
+          <specular>0.5 0.55 0.6 1</specular>
+        </material>
+      </visual>
+      <visual name="roof_bay3_north_slope">
+        <pose>0 12.5 5.35 -0.431 0 0</pose>
+        <geometry><box><size>60.0 5.50 0.015</size></box></geometry>
+        <material>
+          <ambient>0.85 0.93 0.98 0.25</ambient>
+          <diffuse>0.88 0.95 1.0 0.25</diffuse>
+          <specular>0.5 0.55 0.6 1</specular>
+        </material>
+      </visual>
+
+    </link>
+  </model>
+</sdf>

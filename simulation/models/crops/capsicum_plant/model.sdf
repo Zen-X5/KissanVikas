@@ -1,0 +1,71 @@
+<?xml version="1.0" ?>
+<sdf version="1.9">
+  <model name="capsicum_plant">
+    <static>true</static>
+
+    <link name="plant_link">
+      <pose>0 0 0 0 0 0</pose>
+
+      <!-- Main Stem & Woody Base -->
+      <visual name="main_stem">
+        <pose>0 0 0.25 0 0 0</pose>
+        <geometry><cylinder><radius>0.025</radius><length>0.5</length></cylinder></geometry>
+        <material><ambient>0.22 0.35 0.15 1</ambient><diffuse>0.32 0.46 0.22 1</diffuse></material>
+      </visual>
+
+      <!-- Wide Bushy Spreading Foliage (Emerald / Forest Green) -->
+      <visual name="canopy_lower">
+        <pose>0 0 0.35 0 0 0.4</pose>
+        <geometry><box><size>0.78 0.78 0.3</size></box></geometry>
+        <material><ambient>0.06 0.32 0.08 1</ambient><diffuse>0.09 0.42 0.11 1</diffuse><roughness>0.7</roughness></material>
+      </visual>
+
+      <visual name="canopy_upper">
+        <pose>0 0 0.62 0 0 1.2</pose>
+        <geometry><box><size>0.65 0.65 0.35</size></box></geometry>
+        <material><ambient>0.08 0.38 0.1 1</ambient><diffuse>0.12 0.48 0.14 1</diffuse><roughness>0.7</roughness></material>
+      </visual>
+
+      <!-- Prominent Bell Peppers (Vibrant Red, Yellow, and Orange - Highly Visible from Drone) -->
+      <!-- Top Red Pepper -->
+      <visual name="bell_pepper_red_top">
+        <pose>0.16 0.14 0.7 0 0 0.3</pose>
+        <geometry><box><size>0.11 0.11 0.13</size></box></geometry>
+        <material><ambient>0.9 0.05 0.05 1</ambient><diffuse>0.98 0.08 0.08 1</diffuse><specular>0.7 0.7 0.7 1</specular></material>
+      </visual>
+
+      <!-- Top Yellow Pepper -->
+      <visual name="bell_pepper_yellow_top">
+        <pose>-0.15 -0.15 0.68 0 0 0.8</pose>
+        <geometry><box><size>0.11 0.11 0.13</size></box></geometry>
+        <material><ambient>0.92 0.78 0.05 1</ambient><diffuse>0.98 0.88 0.1 1</diffuse><specular>0.7 0.7 0.7 1</specular></material>
+      </visual>
+
+      <!-- Side Orange Pepper -->
+      <visual name="bell_pepper_orange">
+        <pose>-0.18 0.16 0.5 0 0 0.4</pose>
+        <geometry><box><size>0.105 0.105 0.125</size></box></geometry>
+        <material><ambient>0.92 0.45 0.05 1</ambient><diffuse>0.98 0.55 0.08 1</diffuse><specular>0.7 0.7 0.7 1</specular></material>
+      </visual>
+
+      <!-- Side Red Pepper -->
+      <visual name="bell_pepper_red_side">
+        <pose>0.18 -0.16 0.48 0 0 1.1</pose>
+        <geometry><box><size>0.105 0.105 0.125</size></box></geometry>
+        <material><ambient>0.9 0.05 0.05 1</ambient><diffuse>0.98 0.08 0.08 1</diffuse><specular>0.7 0.7 0.7 1</specular></material>
+      </visual>
+
+      <!-- Glossy Green Pepper -->
+      <visual name="bell_pepper_green">
+        <pose>0.0 0.22 0.55 0 0 0</pose>
+        <geometry><box><size>0.1 0.1 0.12</size></box></geometry>
+        <material><ambient>0.15 0.65 0.15 1</ambient><diffuse>0.22 0.82 0.22 1</diffuse><specular>0.7 0.7 0.7 1</specular></material>
+      </visual>
+
+      <collision name="plant_collision">
+        <pose>0 0 0.45 0 0 0</pose>
+        <geometry><cylinder><radius>0.4</radius><length>0.9</length></cylinder></geometry>
+      </collision>
+    </link>
+  </model>
+</sdf>

@@ -1,0 +1,99 @@
+<?xml version="1.0" ?>
+<sdf version="1.9">
+  <model name="cucumber_bed">
+    <static>true</static>
+    <link name="bed_link">
+      <pose>0 0 0 0 0 0</pose>
+      <!-- Raised Bed Soil & Structure -->
+      <visual name="soil_surface">
+        <pose>0 0 0.12 0 0 0</pose>
+        <geometry><box><size>11.4 1.1 0.22</size></box></geometry>
+        <material><ambient>0.2 0.14 0.09 1</ambient><diffuse>0.26 0.18 0.12 1</diffuse></material>
+      </visual>
+      <visual name="mulch_strip">
+        <pose>0 0 0.235 0 0 0</pose>
+        <geometry><box><size>11.3 0.95 0.01</size></box></geometry>
+        <material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.15 0.15 0.15 1</diffuse></material>
+      </visual>
+      <visual name="border_left">
+        <pose>0 -0.58 0.125 0 0 0</pose>
+        <geometry><box><size>11.5 0.06 0.25</size></box></geometry>
+        <material><ambient>0.45 0.47 0.5 1</ambient><diffuse>0.55 0.57 0.6 1</diffuse></material>
+      </visual>
+      <visual name="border_right">
+        <pose>0 0.58 0.125 0 0 0</pose>
+        <geometry><box><size>11.5 0.06 0.25</size></box></geometry>
+        <material><ambient>0.45 0.47 0.5 1</ambient><diffuse>0.55 0.57 0.6 1</diffuse></material>
+      </visual>
+      <visual name="stake_l_1"><pose>-4.5 -0.2 0.95 0.15 0 0</pose><geometry><box><size>0.02 0.02 1.55</size></box></geometry><material><ambient>0.7 0.7 0.7 1</ambient><diffuse>0.8 0.8 0.8 1</diffuse></material></visual>
+      <visual name="stake_r_1"><pose>-4.5 0.2 0.95 -0.15 0 0</pose><geometry><box><size>0.02 0.02 1.55</size></box></geometry><material><ambient>0.7 0.7 0.7 1</ambient><diffuse>0.8 0.8 0.8 1</diffuse></material></visual>
+      <visual name="canopy_low_1"><pose>-4.5 0 0.65 0 0 0.5</pose><geometry><box><size>0.75 0.75 0.32</size></box></geometry><material><ambient>0.2 0.55 0.15 1</ambient><diffuse>0.28 0.7 0.22 1</diffuse></material></visual>
+      <visual name="canopy_top_1"><pose>-4.5 0 1.35 0 0 0.2</pose><geometry><box><size>0.6 0.6 0.32</size></box></geometry><material><ambient>0.25 0.62 0.2 1</ambient><diffuse>0.35 0.8 0.28 1</diffuse></material></visual>
+      <visual name="cuc_flower_1_1"><pose>-4.32 0.16 1.45 0 0 0</pose><geometry><sphere><radius>0.07</radius></sphere></geometry><material><ambient>0.98 0.9 0.05 1</ambient><diffuse>1.0 0.95 0.1 1</diffuse></material></visual>
+      <visual name="cuc_flower_2_1"><pose>-4.66 -0.14 1.42 0 0 0</pose><geometry><sphere><radius>0.065</radius></sphere></geometry><material><ambient>0.98 0.9 0.05 1</ambient><diffuse>1.0 0.95 0.1 1</diffuse></material></visual>
+      <visual name="cuc_fruit_1_1"><pose>-4.3 0.12 0.85 0 0 0</pose><geometry><cylinder><radius>0.04</radius><length>0.34</length></cylinder></geometry><material><ambient>0.05 0.28 0.05 1</ambient><diffuse>0.08 0.38 0.08 1</diffuse></material></visual>
+      <visual name="cuc_fruit_2_1"><pose>-4.7 -0.14 0.9 0 0 0</pose><geometry><cylinder><radius>0.038</radius><length>0.32</length></cylinder></geometry><material><ambient>0.05 0.28 0.05 1</ambient><diffuse>0.08 0.38 0.08 1</diffuse></material></visual>
+      <visual name="stake_l_2"><pose>-3.2 -0.2 0.95 0.15 0 0</pose><geometry><box><size>0.02 0.02 1.55</size></box></geometry><material><ambient>0.7 0.7 0.7 1</ambient><diffuse>0.8 0.8 0.8 1</diffuse></material></visual>
+      <visual name="stake_r_2"><pose>-3.2 0.2 0.95 -0.15 0 0</pose><geometry><box><size>0.02 0.02 1.55</size></box></geometry><material><ambient>0.7 0.7 0.7 1</ambient><diffuse>0.8 0.8 0.8 1</diffuse></material></visual>
+      <visual name="canopy_low_2"><pose>-3.2 0 0.65 0 0 0.5</pose><geometry><box><size>0.75 0.75 0.32</size></box></geometry><material><ambient>0.2 0.55 0.15 1</ambient><diffuse>0.28 0.7 0.22 1</diffuse></material></visual>
+      <visual name="canopy_top_2"><pose>-3.2 0 1.35 0 0 0.2</pose><geometry><box><size>0.6 0.6 0.32</size></box></geometry><material><ambient>0.25 0.62 0.2 1</ambient><diffuse>0.35 0.8 0.28 1</diffuse></material></visual>
+      <visual name="cuc_flower_1_2"><pose>-3.02 0.16 1.45 0 0 0</pose><geometry><sphere><radius>0.07</radius></sphere></geometry><material><ambient>0.98 0.9 0.05 1</ambient><diffuse>1.0 0.95 0.1 1</diffuse></material></visual>
+      <visual name="cuc_flower_2_2"><pose>-3.3600000000000003 -0.14 1.42 0 0 0</pose><geometry><sphere><radius>0.065</radius></sphere></geometry><material><ambient>0.98 0.9 0.05 1</ambient><diffuse>1.0 0.95 0.1 1</diffuse></material></visual>
+      <visual name="cuc_fruit_1_2"><pose>-3.0 0.12 0.85 0 0 0</pose><geometry><cylinder><radius>0.04</radius><length>0.34</length></cylinder></geometry><material><ambient>0.05 0.28 0.05 1</ambient><diffuse>0.08 0.38 0.08 1</diffuse></material></visual>
+      <visual name="cuc_fruit_2_2"><pose>-3.4000000000000004 -0.14 0.9 0 0 0</pose><geometry><cylinder><radius>0.038</radius><length>0.32</length></cylinder></geometry><material><ambient>0.05 0.28 0.05 1</ambient><diffuse>0.08 0.38 0.08 1</diffuse></material></visual>
+      <visual name="stake_l_3"><pose>-1.9 -0.2 0.95 0.15 0 0</pose><geometry><box><size>0.02 0.02 1.55</size></box></geometry><material><ambient>0.7 0.7 0.7 1</ambient><diffuse>0.8 0.8 0.8 1</diffuse></material></visual>
+      <visual name="stake_r_3"><pose>-1.9 0.2 0.95 -0.15 0 0</pose><geometry><box><size>0.02 0.02 1.55</size></box></geometry><material><ambient>0.7 0.7 0.7 1</ambient><diffuse>0.8 0.8 0.8 1</diffuse></material></visual>
+      <visual name="canopy_low_3"><pose>-1.9 0 0.65 0 0 0.5</pose><geometry><box><size>0.75 0.75 0.32</size></box></geometry><material><ambient>0.2 0.55 0.15 1</ambient><diffuse>0.28 0.7 0.22 1</diffuse></material></visual>
+      <visual name="canopy_top_3"><pose>-1.9 0 1.35 0 0 0.2</pose><geometry><box><size>0.6 0.6 0.32</size></box></geometry><material><ambient>0.25 0.62 0.2 1</ambient><diffuse>0.35 0.8 0.28 1</diffuse></material></visual>
+      <visual name="cuc_flower_1_3"><pose>-1.72 0.16 1.45 0 0 0</pose><geometry><sphere><radius>0.07</radius></sphere></geometry><material><ambient>0.98 0.9 0.05 1</ambient><diffuse>1.0 0.95 0.1 1</diffuse></material></visual>
+      <visual name="cuc_flower_2_3"><pose>-2.06 -0.14 1.42 0 0 0</pose><geometry><sphere><radius>0.065</radius></sphere></geometry><material><ambient>0.98 0.9 0.05 1</ambient><diffuse>1.0 0.95 0.1 1</diffuse></material></visual>
+      <visual name="cuc_fruit_1_3"><pose>-1.7 0.12 0.85 0 0 0</pose><geometry><cylinder><radius>0.04</radius><length>0.34</length></cylinder></geometry><material><ambient>0.05 0.28 0.05 1</ambient><diffuse>0.08 0.38 0.08 1</diffuse></material></visual>
+      <visual name="cuc_fruit_2_3"><pose>-2.1 -0.14 0.9 0 0 0</pose><geometry><cylinder><radius>0.038</radius><length>0.32</length></cylinder></geometry><material><ambient>0.05 0.28 0.05 1</ambient><diffuse>0.08 0.38 0.08 1</diffuse></material></visual>
+      <visual name="stake_l_4"><pose>-0.6 -0.2 0.95 0.15 0 0</pose><geometry><box><size>0.02 0.02 1.55</size></box></geometry><material><ambient>0.7 0.7 0.7 1</ambient><diffuse>0.8 0.8 0.8 1</diffuse></material></visual>
+      <visual name="stake_r_4"><pose>-0.6 0.2 0.95 -0.15 0 0</pose><geometry><box><size>0.02 0.02 1.55</size></box></geometry><material><ambient>0.7 0.7 0.7 1</ambient><diffuse>0.8 0.8 0.8 1</diffuse></material></visual>
+      <visual name="canopy_low_4"><pose>-0.6 0 0.65 0 0 0.5</pose><geometry><box><size>0.75 0.75 0.32</size></box></geometry><material><ambient>0.2 0.55 0.15 1</ambient><diffuse>0.28 0.7 0.22 1</diffuse></material></visual>
+      <visual name="canopy_top_4"><pose>-0.6 0 1.35 0 0 0.2</pose><geometry><box><size>0.6 0.6 0.32</size></box></geometry><material><ambient>0.25 0.62 0.2 1</ambient><diffuse>0.35 0.8 0.28 1</diffuse></material></visual>
+      <visual name="cuc_flower_1_4"><pose>-0.42 0.16 1.45 0 0 0</pose><geometry><sphere><radius>0.07</radius></sphere></geometry><material><ambient>0.98 0.9 0.05 1</ambient><diffuse>1.0 0.95 0.1 1</diffuse></material></visual>
+      <visual name="cuc_flower_2_4"><pose>-0.76 -0.14 1.42 0 0 0</pose><geometry><sphere><radius>0.065</radius></sphere></geometry><material><ambient>0.98 0.9 0.05 1</ambient><diffuse>1.0 0.95 0.1 1</diffuse></material></visual>
+      <visual name="cuc_fruit_1_4"><pose>-0.39999999999999997 0.12 0.85 0 0 0</pose><geometry><cylinder><radius>0.04</radius><length>0.34</length></cylinder></geometry><material><ambient>0.05 0.28 0.05 1</ambient><diffuse>0.08 0.38 0.08 1</diffuse></material></visual>
+      <visual name="cuc_fruit_2_4"><pose>-0.8 -0.14 0.9 0 0 0</pose><geometry><cylinder><radius>0.038</radius><length>0.32</length></cylinder></geometry><material><ambient>0.05 0.28 0.05 1</ambient><diffuse>0.08 0.38 0.08 1</diffuse></material></visual>
+      <visual name="stake_l_5"><pose>0.7 -0.2 0.95 0.15 0 0</pose><geometry><box><size>0.02 0.02 1.55</size></box></geometry><material><ambient>0.7 0.7 0.7 1</ambient><diffuse>0.8 0.8 0.8 1</diffuse></material></visual>
+      <visual name="stake_r_5"><pose>0.7 0.2 0.95 -0.15 0 0</pose><geometry><box><size>0.02 0.02 1.55</size></box></geometry><material><ambient>0.7 0.7 0.7 1</ambient><diffuse>0.8 0.8 0.8 1</diffuse></material></visual>
+      <visual name="canopy_low_5"><pose>0.7 0 0.65 0 0 0.5</pose><geometry><box><size>0.75 0.75 0.32</size></box></geometry><material><ambient>0.2 0.55 0.15 1</ambient><diffuse>0.28 0.7 0.22 1</diffuse></material></visual>
+      <visual name="canopy_top_5"><pose>0.7 0 1.35 0 0 0.2</pose><geometry><box><size>0.6 0.6 0.32</size></box></geometry><material><ambient>0.25 0.62 0.2 1</ambient><diffuse>0.35 0.8 0.28 1</diffuse></material></visual>
+      <visual name="cuc_flower_1_5"><pose>0.8799999999999999 0.16 1.45 0 0 0</pose><geometry><sphere><radius>0.07</radius></sphere></geometry><material><ambient>0.98 0.9 0.05 1</ambient><diffuse>1.0 0.95 0.1 1</diffuse></material></visual>
+      <visual name="cuc_flower_2_5"><pose>0.5399999999999999 -0.14 1.42 0 0 0</pose><geometry><sphere><radius>0.065</radius></sphere></geometry><material><ambient>0.98 0.9 0.05 1</ambient><diffuse>1.0 0.95 0.1 1</diffuse></material></visual>
+      <visual name="cuc_fruit_1_5"><pose>0.8999999999999999 0.12 0.85 0 0 0</pose><geometry><cylinder><radius>0.04</radius><length>0.34</length></cylinder></geometry><material><ambient>0.05 0.28 0.05 1</ambient><diffuse>0.08 0.38 0.08 1</diffuse></material></visual>
+      <visual name="cuc_fruit_2_5"><pose>0.49999999999999994 -0.14 0.9 0 0 0</pose><geometry><cylinder><radius>0.038</radius><length>0.32</length></cylinder></geometry><material><ambient>0.05 0.28 0.05 1</ambient><diffuse>0.08 0.38 0.08 1</diffuse></material></visual>
+      <visual name="stake_l_6"><pose>2.0 -0.2 0.95 0.15 0 0</pose><geometry><box><size>0.02 0.02 1.55</size></box></geometry><material><ambient>0.7 0.7 0.7 1</ambient><diffuse>0.8 0.8 0.8 1</diffuse></material></visual>
+      <visual name="stake_r_6"><pose>2.0 0.2 0.95 -0.15 0 0</pose><geometry><box><size>0.02 0.02 1.55</size></box></geometry><material><ambient>0.7 0.7 0.7 1</ambient><diffuse>0.8 0.8 0.8 1</diffuse></material></visual>
+      <visual name="canopy_low_6"><pose>2.0 0 0.65 0 0 0.5</pose><geometry><box><size>0.75 0.75 0.32</size></box></geometry><material><ambient>0.2 0.55 0.15 1</ambient><diffuse>0.28 0.7 0.22 1</diffuse></material></visual>
+      <visual name="canopy_top_6"><pose>2.0 0 1.35 0 0 0.2</pose><geometry><box><size>0.6 0.6 0.32</size></box></geometry><material><ambient>0.25 0.62 0.2 1</ambient><diffuse>0.35 0.8 0.28 1</diffuse></material></visual>
+      <visual name="cuc_flower_1_6"><pose>2.18 0.16 1.45 0 0 0</pose><geometry><sphere><radius>0.07</radius></sphere></geometry><material><ambient>0.98 0.9 0.05 1</ambient><diffuse>1.0 0.95 0.1 1</diffuse></material></visual>
+      <visual name="cuc_flower_2_6"><pose>1.84 -0.14 1.42 0 0 0</pose><geometry><sphere><radius>0.065</radius></sphere></geometry><material><ambient>0.98 0.9 0.05 1</ambient><diffuse>1.0 0.95 0.1 1</diffuse></material></visual>
+      <visual name="cuc_fruit_1_6"><pose>2.2 0.12 0.85 0 0 0</pose><geometry><cylinder><radius>0.04</radius><length>0.34</length></cylinder></geometry><material><ambient>0.05 0.28 0.05 1</ambient><diffuse>0.08 0.38 0.08 1</diffuse></material></visual>
+      <visual name="cuc_fruit_2_6"><pose>1.8 -0.14 0.9 0 0 0</pose><geometry><cylinder><radius>0.038</radius><length>0.32</length></cylinder></geometry><material><ambient>0.05 0.28 0.05 1</ambient><diffuse>0.08 0.38 0.08 1</diffuse></material></visual>
+      <visual name="stake_l_7"><pose>3.3 -0.2 0.95 0.15 0 0</pose><geometry><box><size>0.02 0.02 1.55</size></box></geometry><material><ambient>0.7 0.7 0.7 1</ambient><diffuse>0.8 0.8 0.8 1</diffuse></material></visual>
+      <visual name="stake_r_7"><pose>3.3 0.2 0.95 -0.15 0 0</pose><geometry><box><size>0.02 0.02 1.55</size></box></geometry><material><ambient>0.7 0.7 0.7 1</ambient><diffuse>0.8 0.8 0.8 1</diffuse></material></visual>
+      <visual name="canopy_low_7"><pose>3.3 0 0.65 0 0 0.5</pose><geometry><box><size>0.75 0.75 0.32</size></box></geometry><material><ambient>0.2 0.55 0.15 1</ambient><diffuse>0.28 0.7 0.22 1</diffuse></material></visual>
+      <visual name="canopy_top_7"><pose>3.3 0 1.35 0 0 0.2</pose><geometry><box><size>0.6 0.6 0.32</size></box></geometry><material><ambient>0.25 0.62 0.2 1</ambient><diffuse>0.35 0.8 0.28 1</diffuse></material></visual>
+      <visual name="cuc_flower_1_7"><pose>3.48 0.16 1.45 0 0 0</pose><geometry><sphere><radius>0.07</radius></sphere></geometry><material><ambient>0.98 0.9 0.05 1</ambient><diffuse>1.0 0.95 0.1 1</diffuse></material></visual>
+      <visual name="cuc_flower_2_7"><pose>3.1399999999999997 -0.14 1.42 0 0 0</pose><geometry><sphere><radius>0.065</radius></sphere></geometry><material><ambient>0.98 0.9 0.05 1</ambient><diffuse>1.0 0.95 0.1 1</diffuse></material></visual>
+      <visual name="cuc_fruit_1_7"><pose>3.5 0.12 0.85 0 0 0</pose><geometry><cylinder><radius>0.04</radius><length>0.34</length></cylinder></geometry><material><ambient>0.05 0.28 0.05 1</ambient><diffuse>0.08 0.38 0.08 1</diffuse></material></visual>
+      <visual name="cuc_fruit_2_7"><pose>3.0999999999999996 -0.14 0.9 0 0 0</pose><geometry><cylinder><radius>0.038</radius><length>0.32</length></cylinder></geometry><material><ambient>0.05 0.28 0.05 1</ambient><diffuse>0.08 0.38 0.08 1</diffuse></material></visual>
+      <visual name="stake_l_8"><pose>4.5 -0.2 0.95 0.15 0 0</pose><geometry><box><size>0.02 0.02 1.55</size></box></geometry><material><ambient>0.7 0.7 0.7 1</ambient><diffuse>0.8 0.8 0.8 1</diffuse></material></visual>
+      <visual name="stake_r_8"><pose>4.5 0.2 0.95 -0.15 0 0</pose><geometry><box><size>0.02 0.02 1.55</size></box></geometry><material><ambient>0.7 0.7 0.7 1</ambient><diffuse>0.8 0.8 0.8 1</diffuse></material></visual>
+      <visual name="canopy_low_8"><pose>4.5 0 0.65 0 0 0.5</pose><geometry><box><size>0.75 0.75 0.32</size></box></geometry><material><ambient>0.2 0.55 0.15 1</ambient><diffuse>0.28 0.7 0.22 1</diffuse></material></visual>
+      <visual name="canopy_top_8"><pose>4.5 0 1.35 0 0 0.2</pose><geometry><box><size>0.6 0.6 0.32</size></box></geometry><material><ambient>0.25 0.62 0.2 1</ambient><diffuse>0.35 0.8 0.28 1</diffuse></material></visual>
+      <visual name="cuc_flower_1_8"><pose>4.68 0.16 1.45 0 0 0</pose><geometry><sphere><radius>0.07</radius></sphere></geometry><material><ambient>0.98 0.9 0.05 1</ambient><diffuse>1.0 0.95 0.1 1</diffuse></material></visual>
+      <visual name="cuc_flower_2_8"><pose>4.34 -0.14 1.42 0 0 0</pose><geometry><sphere><radius>0.065</radius></sphere></geometry><material><ambient>0.98 0.9 0.05 1</ambient><diffuse>1.0 0.95 0.1 1</diffuse></material></visual>
+      <visual name="cuc_fruit_1_8"><pose>4.7 0.12 0.85 0 0 0</pose><geometry><cylinder><radius>0.04</radius><length>0.34</length></cylinder></geometry><material><ambient>0.05 0.28 0.05 1</ambient><diffuse>0.08 0.38 0.08 1</diffuse></material></visual>
+      <visual name="cuc_fruit_2_8"><pose>4.3 -0.14 0.9 0 0 0</pose><geometry><cylinder><radius>0.038</radius><length>0.32</length></cylinder></geometry><material><ambient>0.05 0.28 0.05 1</ambient><diffuse>0.08 0.38 0.08 1</diffuse></material></visual>
+      <!-- Single Bed Physics Collision -->
+      <collision name="bed_col">
+        <pose>0 0 0.5 0 0 0</pose>
+        <geometry><box><size>11.5 1.2 1.0</size></box></geometry>
+      </collision>
+    </link>
+  </model>
+</sdf>
