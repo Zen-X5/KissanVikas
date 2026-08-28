@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo } from "react";
 import {
   StyleSheet,
   View,
@@ -6,44 +6,55 @@ import {
   ActivityIndicator,
   Pressable,
   ScrollView,
-} from 'react-native';
+} from "react-native";
 import {
   useGetPolyhouseTwinQuery,
   SpatialObject,
-} from '../../../lib/services/polyhouse';
-import { PolyhouseMap } from '@/components/PoluhouseMap';
-import { ObjectInspector } from '@/components/ObjectInspector';
+} from "../../../lib/services/polyhouse";
+import { PolyhouseMap } from "@/components/PoluhouseMap";
+import { ObjectInspector } from "@/components/ObjectInspector";
 
 export const PolyhouseTwinScreen: React.FC = () => {
-  const polyhouseId = 'PH-DEMO-001';
+  const polyhouseId = "PH-DEMO-001";
   const { data, isLoading, isError, refetch } =
     useGetPolyhouseTwinQuery(polyhouseId);
 
   const [selectedObject, setSelectedObject] = useState<SpatialObject | null>(
-    null
+    null,
   );
-  const [activeCategory, setActiveCategory] = useState<string>('ALL');
+  const [activeCategory, setActiveCategory] = useState<string>("ALL");
 
   // Extract unique crop species/classes for quick filter chips
   const cropCategories = useMemo(() => {
-    if (!data?.objects) return ['ALL'];
-    const crops = data.objects.filter((o) => o.type === 'crop');
+    if (!data?.objects) return ["ALL"];
+    const crops = data.objects.filter((o) => o.type === "crop");
     const classes = Array.from(new Set(crops.map((c) => c.class_name)));
-    return ['ALL', 'zones', 'beds', ...classes];
+    return ["ALL", "zones", "beds", ...classes];
   }, [data]);
 
   // Filter map objects based on selected category chip
   const filteredObjects = useMemo(() => {
     if (!data?.objects) return [];
-    if (activeCategory === 'ALL') return data.objects;
-    if (activeCategory === 'zones')
-      return data.objects.filter((o) => o.type === 'zone' || o.type === 'structure');
-    if (activeCategory === 'beds')
-      return data.objects.filter((o) => o.type === 'bed' || o.type === 'structure');
+    if (activeCategory === "ALL") return data.objects;
 
-    // Filter specific crop species while keeping structure context
+    if (activeCategory === "zones") {
+      return data.objects.filter(
+        (o) => o.type === "zone" || o.type === "structure",
+      );
+    }
+
+    if (activeCategory === "beds") {
+      return data.objects.filter(
+        (o) => o.type === "bed" || o.type === "zone" || o.type === "structure",
+      );
+    }
+
+    // Preserve context: Keep structures and zones visible while filtering crops
     return data.objects.filter(
-      (o) => o.type === 'structure' || o.class_name === activeCategory
+      (o) =>
+        o.type === "structure" ||
+        o.type === "zone" ||
+        o.class_name === activeCategory,
     );
   }, [data, activeCategory]);
 
@@ -78,7 +89,8 @@ export const PolyhouseTwinScreen: React.FC = () => {
           <View>
             <Text style={styles.headerTitle}>Polyhouse Digital Twin</Text>
             <Text style={styles.headerSub}>
-              Facility ID: <Text style={styles.headerSubHighlight}>{data.polyhouse_id}</Text>
+              Facility ID:{" "}
+              <Text style={styles.headerSubHighlight}>{data.polyhouse_id}</Text>
             </Text>
           </View>
 
@@ -97,16 +109,13 @@ export const PolyhouseTwinScreen: React.FC = () => {
         >
           {cropCategories.map((cat) => {
             const isActive = activeCategory === cat;
-            const label = cat.replace('_', ' ').toUpperCase();
+            const label = cat.replace("_", " ").toUpperCase();
 
             return (
               <Pressable
                 key={cat}
                 onPress={() => setActiveCategory(cat)}
-                style={[
-                  styles.filterChip,
-                  isActive && styles.filterChipActive,
-                ]}
+                style={[styles.filterChip, isActive && styles.filterChipActive]}
               >
                 <Text
                   style={[
@@ -143,95 +152,95 @@ export const PolyhouseTwinScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1E120B',
+    backgroundColor: "#1E120B",
   },
   center: {
     flex: 1,
-    justify: 'center',
-    alignItems: 'center',
-    backgroundColor: '#0F172A',
+    justify: "center",
+    alignItems: "center",
+    backgroundColor: "#0F172A",
     padding: 24,
   },
   loadingText: {
     marginTop: 14,
-    color: '#94A3B8',
+    color: "#94A3B8",
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   errorTitle: {
-    color: '#F8FAFC',
+    color: "#F8FAFC",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   errorSub: {
-    color: '#94A3B8',
+    color: "#94A3B8",
     fontSize: 13,
     marginTop: 6,
-    textAlign: 'center',
+    textAlign: "center",
   },
   retryBtn: {
     marginTop: 20,
-    backgroundColor: '#0284C7',
+    backgroundColor: "#0284C7",
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 8,
   },
   retryBtnText: {
-    color: '#FFFFFF',
-    fontWeight: '700',
+    color: "#FFFFFF",
+    fontWeight: "700",
     fontSize: 13,
   },
   header: {
     paddingTop: 54,
     paddingBottom: 12,
-    backgroundColor: 'rgba(15, 23, 42, 0.95)',
+    backgroundColor: "rgba(15, 23, 42, 0.95)",
     borderBottomWidth: 1,
-    borderBottomColor: '#334155',
+    borderBottomColor: "#334155",
     zIndex: 10,
   },
   headerMain: {
-    flexDirection: 'row',
-    justify: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justify: "space-between",
+    alignItems: "center",
     paddingHorizontal: 16,
     marginBottom: 12,
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: '800',
-    color: '#F8FAFC',
+    fontWeight: "800",
+    color: "#F8FAFC",
     letterSpacing: -0.4,
   },
   headerSub: {
     fontSize: 12,
-    color: '#94A3B8',
+    color: "#94A3B8",
     marginTop: 2,
   },
   headerSubHighlight: {
-    color: '#38BDF8',
-    fontWeight: '600',
+    color: "#38BDF8",
+    fontWeight: "600",
   },
   liveBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(34, 197, 94, 0.15)',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(34, 197, 94, 0.15)",
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: 'rgba(34, 197, 94, 0.3)',
+    borderColor: "rgba(34, 197, 94, 0.3)",
     gap: 6,
   },
   liveDot: {
     width: 7,
     height: 7,
     borderRadius: 4,
-    backgroundColor: '#22C55E',
+    backgroundColor: "#22C55E",
   },
   liveText: {
     fontSize: 11,
-    fontWeight: '700',
-    color: '#4ADE80',
+    fontWeight: "700",
+    color: "#4ADE80",
   },
   filterScroll: {
     paddingHorizontal: 16,
@@ -241,22 +250,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 6,
     borderRadius: 20,
-    backgroundColor: '#1E293B',
+    backgroundColor: "#1E293B",
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: "#334155",
   },
   filterChipActive: {
-    backgroundColor: '#0284C7',
-    borderColor: '#38BDF8',
+    backgroundColor: "#0284C7",
+    borderColor: "#38BDF8",
   },
   filterChipText: {
     fontSize: 11,
-    fontWeight: '700',
-    color: '#94A3B8',
+    fontWeight: "700",
+    color: "#94A3B8",
     letterSpacing: 0.4,
   },
   filterChipTextActive: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
   },
   mapContainer: {
     flex: 1,

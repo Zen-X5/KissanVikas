@@ -1,5 +1,5 @@
-import React from 'react';
-import { StyleSheet, View, Text, Pressable } from 'react-native';
+import React from "react";
+import { StyleSheet, View, Text, Pressable } from "react-native";
 import Svg, {
   Rect,
   Circle,
@@ -10,14 +10,14 @@ import Svg, {
   Pattern,
   LinearGradient,
   Stop,
-} from 'react-native-svg';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+} from "react-native-svg";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
-} from 'react-native-reanimated';
-import { SpatialObject } from '../../lib/services/polyhouse';
+} from "react-native-reanimated";
+import { SpatialObject } from "../../lib/services/polyhouse";
 
 interface MapProps {
   objects: SpatialObject[];
@@ -25,24 +25,25 @@ interface MapProps {
   onSelectObject: (obj: SpatialObject) => void;
 }
 
-const MIN_SCALE = 0.8;
+const MIN_SCALE = 0.5;
 const MAX_SCALE = 5;
+const DEFAULT_SCALE = 0.9;
 
 export const PolyhouseMap: React.FC<MapProps> = ({
   objects,
   selectedObject,
   onSelectObject,
 }) => {
-  const structure = objects.find((o) => o.type === 'structure') || {
+  const structure = objects.find((o) => o.type === "structure") || {
     dimensions: { width_m: 12, depth_m: 8 },
   };
 
   const mapW = structure.dimensions.width_m;
   const mapH = structure.dimensions.depth_m;
 
-  // Reanimated shared values for zoom/pan
-  const scale = useSharedValue(1);
-  const savedScale = useSharedValue(1);
+  // Reanimated shared values initialized to DEFAULT_SCALE
+  const scale = useSharedValue(DEFAULT_SCALE);
+  const savedScale = useSharedValue(DEFAULT_SCALE);
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
   const savedTranslateX = useSharedValue(0);
@@ -62,8 +63,8 @@ export const PolyhouseMap: React.FC<MapProps> = ({
   };
 
   const resetZoom = () => {
-    scale.value = withSpring(1);
-    savedScale.value = 1;
+    scale.value = withSpring(DEFAULT_SCALE);
+    savedScale.value = DEFAULT_SCALE;
     translateX.value = withSpring(0);
     translateY.value = withSpring(0);
     savedTranslateX.value = 0;
@@ -74,7 +75,7 @@ export const PolyhouseMap: React.FC<MapProps> = ({
   const doubleTapGesture = Gesture.Tap()
     .numberOfTaps(2)
     .onEnd(() => {
-      if (scale.value > 1.5) {
+      if (scale.value > 1.8) {
         resetZoom();
       } else {
         scale.value = withSpring(2.5);
@@ -85,7 +86,10 @@ export const PolyhouseMap: React.FC<MapProps> = ({
   // Pinch Gesture
   const pinchGesture = Gesture.Pinch()
     .onUpdate((e) => {
-      scale.value = Math.max(MIN_SCALE, Math.min(savedScale.value * e.scale, MAX_SCALE));
+      scale.value = Math.max(
+        MIN_SCALE,
+        Math.min(savedScale.value * e.scale, MAX_SCALE),
+      );
     })
     .onEnd(() => {
       savedScale.value = scale.value;
@@ -104,7 +108,7 @@ export const PolyhouseMap: React.FC<MapProps> = ({
 
   const composedGesture = Gesture.Simultaneous(
     Gesture.Race(doubleTapGesture, panGesture),
-    pinchGesture
+    pinchGesture,
   );
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -122,9 +126,9 @@ export const PolyhouseMap: React.FC<MapProps> = ({
     h: obj.dimensions.depth_m,
   });
 
-  const zones = objects.filter((o) => o.type === 'zone');
-  const beds = objects.filter((o) => o.type === 'bed');
-  const crops = objects.filter((o) => o.type === 'crop');
+  const zones = objects.filter((o) => o.type === "zone");
+  const beds = objects.filter((o) => o.type === "bed");
+  const crops = objects.filter((o) => o.type === "crop");
 
   const renderCropGraphic = (c: SpatialObject) => {
     const isSelected = selectedObject?.id === c.id;
@@ -133,44 +137,102 @@ export const PolyhouseMap: React.FC<MapProps> = ({
     const cy = c.position.y_m;
 
     switch (c.class_name) {
-      case 'tomato':
+      case "tomato":
         return (
           <G key={c.id} onPress={() => onSelectObject(c)}>
             <Circle cx={cx} cy={cy} r={r} fill="#2D6A4F" />
-            <Circle cx={cx - r * 0.3} cy={cy - r * 0.2} r={r * 0.6} fill="#40916C" />
-            <Circle cx={cx - r * 0.2} cy={cy - r * 0.1} r={r * 0.35} fill="#E63946" />
-            <Circle cx={cx + r * 0.25} cy={cy + r * 0.2} r={r * 0.3} fill="#EF233C" />
+            <Circle
+              cx={cx - r * 0.3}
+              cy={cy - r * 0.2}
+              r={r * 0.6}
+              fill="#40916C"
+            />
+            <Circle
+              cx={cx - r * 0.2}
+              cy={cy - r * 0.1}
+              r={r * 0.35}
+              fill="#E63946"
+            />
+            <Circle
+              cx={cx + r * 0.25}
+              cy={cy + r * 0.2}
+              r={r * 0.3}
+              fill="#EF233C"
+            />
             {isSelected && (
-              <Circle cx={cx} cy={cy} r={r + 0.08} stroke="#38BDF8" strokeWidth={0.06} fill="none" />
+              <Circle
+                cx={cx}
+                cy={cy}
+                r={r + 0.08}
+                stroke="#38BDF8"
+                strokeWidth={0.06}
+                fill="none"
+              />
             )}
           </G>
         );
 
-      case 'bell_pepper':
+      case "bell_pepper":
         return (
           <G key={c.id} onPress={() => onSelectObject(c)}>
             <Circle cx={cx} cy={cy} r={r} fill="#1B4332" />
-            <Circle cx={cx + r * 0.2} cy={cy - r * 0.1} r={r * 0.55} fill="#2D6A4F" />
-            <Rect x={cx - r * 0.3} y={cy - r * 0.3} width={r * 0.6} height={r * 0.6} rx={r * 0.15} fill="#FFB703" />
+            <Circle
+              cx={cx + r * 0.2}
+              cy={cy - r * 0.1}
+              r={r * 0.55}
+              fill="#2D6A4F"
+            />
+            <Rect
+              x={cx - r * 0.3}
+              y={cy - r * 0.3}
+              width={r * 0.6}
+              height={r * 0.6}
+              rx={r * 0.15}
+              fill="#FFB703"
+            />
             {isSelected && (
-              <Circle cx={cx} cy={cy} r={r + 0.08} stroke="#38BDF8" strokeWidth={0.06} fill="none" />
+              <Circle
+                cx={cx}
+                cy={cy}
+                r={r + 0.08}
+                stroke="#38BDF8"
+                strokeWidth={0.06}
+                fill="none"
+              />
             )}
           </G>
         );
 
-      case 'strawberry':
+      case "strawberry":
         return (
           <G key={c.id} onPress={() => onSelectObject(c)}>
             <Circle cx={cx} cy={cy} r={r} fill="#52B788" />
-            <Circle cx={cx - r * 0.2} cy={cy + r * 0.1} r={r * 0.3} fill="#D90429" />
-            <Circle cx={cx + r * 0.2} cy={cy - r * 0.2} r={r * 0.25} fill="#D90429" />
+            <Circle
+              cx={cx - r * 0.2}
+              cy={cy + r * 0.1}
+              r={r * 0.3}
+              fill="#D90429"
+            />
+            <Circle
+              cx={cx + r * 0.2}
+              cy={cy - r * 0.2}
+              r={r * 0.25}
+              fill="#D90429"
+            />
             {isSelected && (
-              <Circle cx={cx} cy={cy} r={r + 0.08} stroke="#38BDF8" strokeWidth={0.06} fill="none" />
+              <Circle
+                cx={cx}
+                cy={cy}
+                r={r + 0.08}
+                stroke="#38BDF8"
+                strokeWidth={0.06}
+                fill="none"
+              />
             )}
           </G>
         );
 
-      case 'cucumber':
+      case "cucumber":
         return (
           <G key={c.id} onPress={() => onSelectObject(c)}>
             <Circle cx={cx} cy={cy} r={r} fill="#2D6A4F" />
@@ -182,7 +244,14 @@ export const PolyhouseMap: React.FC<MapProps> = ({
               strokeLinecap="round"
             />
             {isSelected && (
-              <Circle cx={cx} cy={cy} r={r + 0.08} stroke="#38BDF8" strokeWidth={0.06} fill="none" />
+              <Circle
+                cx={cx}
+                cy={cy}
+                r={r + 0.08}
+                stroke="#38BDF8"
+                strokeWidth={0.06}
+                fill="none"
+              />
             )}
           </G>
         );
@@ -192,7 +261,14 @@ export const PolyhouseMap: React.FC<MapProps> = ({
           <G key={c.id} onPress={() => onSelectObject(c)}>
             <Circle cx={cx} cy={cy} r={r} fill="#40916C" />
             {isSelected && (
-              <Circle cx={cx} cy={cy} r={r + 0.08} stroke="#38BDF8" strokeWidth={0.06} fill="none" />
+              <Circle
+                cx={cx}
+                cy={cy}
+                r={r + 0.08}
+                stroke="#38BDF8"
+                strokeWidth={0.06}
+                fill="none"
+              />
             )}
           </G>
         );
@@ -206,18 +282,29 @@ export const PolyhouseMap: React.FC<MapProps> = ({
           <Svg
             width="100%"
             height="100%"
-            viewBox={`0 0 ${mapW} ${mapH}`}
+            // 2. Center the viewBox coordinate system: (-width/2, -depth/2, width, depth)
+            viewBox={`${-mapW / 2} ${-mapH / 2} ${mapW} ${mapH}`}
             preserveAspectRatio="xMidYMid meet"
           >
             <Defs>
-              <Pattern id="dirtPattern" width="0.4" height="0.4" patternUnits="userSpaceOnUse">
+              <Pattern
+                id="dirtPattern"
+                width="0.4"
+                height="0.4"
+                patternUnits="userSpaceOnUse"
+              >
                 <Rect width="0.4" height="0.4" fill="#8D5B4C" />
                 <Circle cx="0.1" cy="0.1" r="0.03" fill="#6F4336" />
                 <Circle cx="0.3" cy="0.25" r="0.04" fill="#543127" />
                 <Circle cx="0.2" cy="0.35" r="0.02" fill="#A46E5E" />
               </Pattern>
 
-              <Pattern id="soilPattern" width="0.2" height="0.2" patternUnits="userSpaceOnUse">
+              <Pattern
+                id="soilPattern"
+                width="0.2"
+                height="0.2"
+                patternUnits="userSpaceOnUse"
+              >
                 <Rect width="0.2" height="0.2" fill="#3D2314" />
                 <Circle cx="0.05" cy="0.05" r="0.02" fill="#29160B" />
                 <Circle cx="0.15" cy="0.12" r="0.025" fill="#4E2F1C" />
@@ -229,10 +316,10 @@ export const PolyhouseMap: React.FC<MapProps> = ({
               </LinearGradient>
             </Defs>
 
-            {/* Ground / Polyhouse Base */}
+            {/* Ground / Polyhouse Base (Centered) */}
             <Rect
-              x={0}
-              y={0}
+              x={-mapW / 2}
+              y={-mapH / 2}
               width={mapW}
               height={mapH}
               fill="url(#dirtPattern)"
@@ -240,10 +327,10 @@ export const PolyhouseMap: React.FC<MapProps> = ({
               strokeWidth={0.12}
             />
 
-            {/* Polyhouse Frame Perimeter */}
+            {/* Polyhouse Frame Perimeter (Centered) */}
             <Rect
-              x={0.05}
-              y={0.05}
+              x={-mapW / 2 + 0.05}
+              y={-mapH / 2 + 0.05}
               width={mapW - 0.1}
               height={mapH - 0.1}
               fill="none"
@@ -264,17 +351,21 @@ export const PolyhouseMap: React.FC<MapProps> = ({
                     y={y}
                     width={w}
                     height={h}
-                    fill={isSelected ? 'rgba(56, 189, 248, 0.15)' : 'rgba(255, 255, 255, 0.05)'}
-                    stroke={isSelected ? '#0284C7' : '#94A3B8'}
+                    fill={
+                      isSelected
+                        ? "rgba(56, 189, 248, 0.15)"
+                        : "rgba(255, 255, 255, 0.05)"
+                    }
+                    stroke={isSelected ? "#0284C7" : "#94A3B8"}
                     strokeWidth={isSelected ? 0.08 : 0.03}
                     strokeDasharray="0.2,0.1"
                     rx={0.1}
                   />
                   <SvgText
-                    x={x + 0.25}
-                    y={y + 0.45}
-                    fontSize={0.28}
-                    fill="#334155"
+                    x={x + 0.5}
+                    y={y + 0.8}
+                    fontSize={0.4}
+                    fill="#94A3B8"
                     fontWeight="600"
                   >
                     {z.id}
@@ -283,7 +374,7 @@ export const PolyhouseMap: React.FC<MapProps> = ({
               );
             })}
 
-            {/* Layer 2: Wooden Raised Growing Beds with Soil */}
+            {/* Layer 2: Wooden Raised Growing Beds */}
             {beds.map((b) => {
               const { x, y, w, h } = getBoxCoords(b);
               const isSelected = selectedObject?.id === b.id;
@@ -297,7 +388,7 @@ export const PolyhouseMap: React.FC<MapProps> = ({
                     width={w}
                     height={h}
                     fill="url(#woodBorder)"
-                    stroke={isSelected ? '#38BDF8' : '#4A2810'}
+                    stroke={isSelected ? "#38BDF8" : "#4A2810"}
                     strokeWidth={isSelected ? 0.08 : 0.02}
                     rx={0.06}
                   />
@@ -309,25 +400,6 @@ export const PolyhouseMap: React.FC<MapProps> = ({
                     fill="url(#soilPattern)"
                     rx={0.03}
                   />
-                  <Rect
-                    x={x + w / 2 - 0.4}
-                    y={y + 0.1}
-                    width={0.8}
-                    height={0.25}
-                    fill="#F1F5F9"
-                    rx={0.04}
-                    opacity={0.85}
-                  />
-                  <SvgText
-                    x={x + w / 2}
-                    y={y + 0.28}
-                    fontSize={0.16}
-                    fill="#0F172A"
-                    fontWeight="bold"
-                    textAnchor="middle"
-                  >
-                    {b.id}
-                  </SvgText>
                 </G>
               );
             })}
@@ -338,7 +410,7 @@ export const PolyhouseMap: React.FC<MapProps> = ({
         </Animated.View>
       </GestureDetector>
 
-      {/* Floating Zoom Control Panel */}
+      {/* Controls */}
       <View style={styles.controlsContainer}>
         <Pressable style={styles.controlButton} onPress={zoomIn}>
           <Text style={styles.buttonText}>+</Text>
@@ -346,7 +418,10 @@ export const PolyhouseMap: React.FC<MapProps> = ({
         <Pressable style={styles.controlButton} onPress={zoomOut}>
           <Text style={styles.buttonText}>−</Text>
         </Pressable>
-        <Pressable style={[styles.controlButton, styles.resetButton]} onPress={resetZoom}>
+        <Pressable
+          style={[styles.controlButton, styles.resetButton]}
+          onPress={resetZoom}
+        >
           <Text style={styles.resetText}>Reset</Text>
         </Pressable>
       </View>
@@ -357,21 +432,21 @@ export const PolyhouseMap: React.FC<MapProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#3D2314',
-    overflow: 'hidden',
+    backgroundColor: "#3D2314",
+    overflow: "hidden",
   },
   canvas: {
     flex: 1,
   },
   controlsContainer: {
-    position: 'absolute',
+    position: "absolute",
     right: 16,
     bottom: 24,
-    backgroundColor: 'rgba(15, 23, 42, 0.85)',
+    backgroundColor: "rgba(15, 23, 42, 0.85)",
     borderRadius: 12,
     padding: 6,
     gap: 8,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 6,
@@ -380,17 +455,17 @@ const styles = StyleSheet.create({
   controlButton: {
     width: 44,
     height: 44,
-    backgroundColor: '#1E293B',
+    backgroundColor: "#1E293B",
     borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: "#334155",
   },
   buttonText: {
-    color: '#F8FAFC',
+    color: "#F8FAFC",
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     lineHeight: 28,
   },
   resetButton: {
@@ -398,9 +473,9 @@ const styles = StyleSheet.create({
     height: 32,
   },
   resetText: {
-    color: '#38BDF8',
+    color: "#38BDF8",
     fontSize: 11,
-    fontWeight: '700',
-    textTransform: 'uppercase',
+    fontWeight: "700",
+    textTransform: "uppercase",
   },
 });
