@@ -5,8 +5,8 @@ import { Mission, MissionDocument } from '../schemas/mission.schema';
 import { SurveyFrame, SurveyFrameDocument } from '../schemas/survey-frame.schema';
 import { TelemetryLog, TelemetryLogDocument } from '../schemas/telemetry-log.schema';
 import { MissionEvent, MissionEventDocument } from '../schemas/mission-event.schema';
-
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
+import { DigitalTwinService } from '../digital-twin/digital-twin.service';
 
 @Injectable()
 export class MissionsService {
@@ -20,6 +20,7 @@ export class MissionsService {
 
   constructor(
     private readonly cloudinaryService: CloudinaryService,
+    private readonly digitalTwinService: DigitalTwinService,
     @Optional() @InjectModel(Mission.name) private missionModel?: Model<MissionDocument>,
     @Optional() @InjectModel(SurveyFrame.name) private frameModel?: Model<SurveyFrameDocument>,
     @Optional() @InjectModel(TelemetryLog.name) private telemetryModel?: Model<TelemetryLogDocument>,
@@ -64,6 +65,11 @@ export class MissionsService {
       if (statistics.framesCaptured) cached.statistics.framesCaptured = statistics.framesCaptured;
       if (statistics.flightDistanceM) cached.statistics.flightDistanceM = statistics.flightDistanceM;
       if (statistics.coveragePercent) cached.statistics.coveragePercent = statistics.coveragePercent;
+
+      // Trigger asynchronous AI Digital Twin reconstruction
+      this.triggerAiReconstruction(missionId).catch((err) => {
+        this.logger.warn(`AI reconstruction background trigger notice: ${err.message}`);
+      });
     }
 
     this.memoryMissions.set(missionId, cached);
@@ -119,6 +125,73 @@ export class MissionsService {
       status: payload.status || eventType,
       ...(statistics.framesCaptured ? { frames_received: statistics.framesCaptured } : {}),
     };
+  }
+
+  /**
+   * Dispatches survey frames to Sahid's FastAPI AI Vision Service
+   * to compute the complete Polyhouse Spatial Digital Twin.
+   */
+  async triggerAiReconstruction(missionId: string) {
+    try {
+      const frames = await this.getFrames(missionId, 300);
+      if (!frames || frames.length === 0) {
+        this.logger.log(`[AI SYNC] No frames to reconstruct for mission ${missionId}`);
+        return;
+      }
+
+      this.logger.log(`🚀 [AI SYNC TRIGGERED] Dispatching ${frames.length} frames to AI Services on http://127.0.0.1:8000/vision/analyze-batch`);
+
+      const formattedFrames = frames.map((f: any) => ({
+        mission_id: missionId,
+        drone_id: f.droneId || 'DRONE-001',
+        frame_id: f.frameId,
+        sequence_number: f.sequenceNumber || 1,
+        stage: f.stage || 'interior_scan',
+        timestamp: f.timestamp,
+        image: {
+          url: f.image?.url || '',
+          width: f.image?.width || 1920,
+          height: f.image?.height || 1080,
+        },
+        drone_pose: {
+          position: {
+            x_m: f.dronePose?.position?.xM ?? 0,
+            y_m: f.dronePose?.position?.yM ?? 0,
+            z_m: f.dronePose?.position?.zM ?? 0,
+          },
+          orientation: {
+            roll_deg: f.dronePose?.orientation?.rollDeg ?? 0,
+            pitch_deg: f.dronePose?.orientation?.pitchDeg ?? -5,
+            yaw_deg: f.dronePose?.orientation?.yawDeg ?? 0,
+          },
+        },
+        camera: {
+          fov_deg: f.camera?.fovDeg ?? 78.0,
+          gimbal_pitch_deg: f.camera?.gimbalPitchDeg ?? -60.0,
+          gimbal_yaw_deg: f.camera?.gimbalYawDeg ?? 0.0,
+        },
+      }));
+
+      const res = await fetch('http://127.0.0.1:8000/vision/analyze-batch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          mission_id: missionId,
+          polyhouse_id: 'PH-DEMO-001',
+          frames: formattedFrames,
+        }),
+      });
+
+      if (res.ok) {
+        const spatialTwin = await res.json();
+        await this.digitalTwinService.updateFromSpatialTwin(spatialTwin);
+        this.logger.log(`🎉 [AI SYNC SUCCESS] Mission ${missionId} Digital Twin reconstructed and saved to MongoDB Atlas!`);
+      } else {
+        this.logger.warn(`AI Service responded with status: ${res.status}`);
+      }
+    } catch (err: any) {
+      this.logger.warn(`AI Service unreachable or offline (skipping auto-sync): ${err.message}`);
+    }
   }
 
   /**
@@ -181,7 +254,7 @@ export class MissionsService {
     const orient = pose.orientation || {};
     const cam = framePayload.camera || {};
 
-    // 1. Process image URL (Upload to Cloudinary if configured)
+    // Process image URL (Upload to Cloudinary if configured)
     const finalImageUrl = await this.cloudinaryService.processFrameImage(img.url, missionId, frameId);
 
     const record = {

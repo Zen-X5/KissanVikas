@@ -42,11 +42,7 @@ $RECYCLE.BIN/
 # IDEs, Editors & Tooling
 # ------------------------------------------------------------------------------
 # VS Code
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
+.vscode/
 *.code-workspace
 .vscode-test/
 
@@ -231,23 +227,40 @@ tensorboard/
 data/raw/
 data/processed/
 datasets/
+dataset/
+ai-services/dataset/images/
+ai-services/dataset/labels/
+ai-services/dataset/*.zip
+ai-services/dataset/*.tar.gz
+
+# Compressed Archives & Large Dataset Bundles
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+*.gz
 
 # ------------------------------------------------------------------------------
-# Drone Simulator & Robotics / ROS (drone-simulator)
+# Drone Simulator & Robotics / ROS (drone-simulator / simulation)
 # ------------------------------------------------------------------------------
 # ROS / ROS2 build artifacts & logs
 log/
 install/
 devel/
+build/
 *.bag
 *.bag.active
 *.mcap
 *.db3
 
-# Simulator recordings & flight telemetry dumps
+# Simulator recordings, survey captures & flight telemetry dumps
 recordings/
 telemetry_logs/
 flight_records/
+simulation/media/
+media/
 *.world.bak
 *.mp4
 *.avi

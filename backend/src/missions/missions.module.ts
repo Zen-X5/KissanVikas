@@ -3,6 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { MissionsController } from './missions.controller';
 import { MissionsService } from './missions.service';
 import { CloudinaryModule } from '../cloudinary/cloudinary.module';
+import { DigitalTwinModule } from '../digital-twin/digital-twin.module';
 import { Mission, MissionSchema } from '../schemas/mission.schema';
 import { SurveyFrame, SurveyFrameSchema } from '../schemas/survey-frame.schema';
 import { TelemetryLog, TelemetryLogSchema } from '../schemas/telemetry-log.schema';
@@ -11,6 +12,7 @@ import { MissionEvent, MissionEventSchema } from '../schemas/mission-event.schem
 @Module({
   imports: [
     CloudinaryModule,
+    DigitalTwinModule,
     MongooseModule.forFeature([
       { name: Mission.name, schema: MissionSchema },
       { name: SurveyFrame.name, schema: SurveyFrameSchema },

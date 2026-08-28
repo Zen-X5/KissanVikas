@@ -32,7 +32,7 @@ class SurveyMissionRunner:
         self,
         mission_id: str = "66bc1234567890abcdef1234",
         drone_id: str = "DRONE-001",
-        backend_url: str = "http://localhost:3000/api/v1",
+        backend_url: Optional[str] = None,
         enable_http: bool = True,
         speed_multiplier: float = 1.0,
         enable_gui_window: bool = False,
@@ -62,24 +62,28 @@ class SurveyMissionRunner:
         self.dist_since_last_frame = 0.0
 
     def _sync_gazebo_pose(self, x: float, y: float, z: float, yaw_deg: float):
-        """Updates the 3D drone position in Gazebo GUI in real-time."""
-        try:
-            import subprocess
-            yaw_rad = math.radians(yaw_deg)
-            qz = math.sin(yaw_rad / 2.0)
-            qw = math.cos(yaw_rad / 2.0)
-            req_str = f'name: "survey_drone", position: {{x: {x:.2f}, y: {y:.2f}, z: {z:.2f}}}, orientation: {{z: {qz:.4f}, w: {qw:.4f}}}'
-            cmd = [
-                'gz', 'service',
-                '-s', '/world/polyhouse_world/set_pose',
-                '--reqtype', 'gz.msgs.Pose',
-                '--reptype', 'gz.msgs.Boolean',
-                '--timeout', '30',
-                '--req', req_str
-            ]
-            subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        except Exception:
-            pass
+        """Updates the 3D drone position in Gazebo GUI asynchronously in the background."""
+        import threading
+        def _do_sync():
+            try:
+                import subprocess
+                yaw_rad = math.radians(yaw_deg)
+                qz = math.sin(yaw_rad / 2.0)
+                qw = math.cos(yaw_rad / 2.0)
+                req_str = f'name: "survey_drone", position: {{x: {x:.2f}, y: {y:.2f}, z: {z:.2f}}}, orientation: {{z: {qz:.4f}, w: {qw:.4f}}}'
+                cmd = [
+                    'gz', 'service',
+                    '-s', '/world/polyhouse_world/set_pose',
+                    '--reqtype', 'gz.msgs.Pose',
+                    '--reptype', 'gz.msgs.Boolean',
+                    '--timeout', '50',
+                    '--req', req_str
+                ]
+                subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=0.1)
+            except Exception:
+                pass
+
+        threading.Thread(target=_do_sync, daemon=True).start()
 
     def _sleep(self, duration_sec: float):
         time.sleep(duration_sec / self.speed_multiplier)
@@ -127,6 +131,7 @@ class SurveyMissionRunner:
         )
 
         last_telemetry_time = 0.0
+        last_progress_print = 0.0
 
         for step_x, step_y, step_z, heading in micro_steps:
             dx = step_x - self.cur_x
@@ -143,7 +148,7 @@ class SurveyMissionRunner:
             self.cur_speed = speed
             self.battery_percent = max(5.0, self.battery_percent - 0.005)
 
-            # Update Gazebo 3D GUI
+            # Update Gazebo 3D GUI asynchronously
             self._sync_gazebo_pose(self.cur_x, self.cur_y, self.cur_z, self.cur_heading)
 
             # Update Live Video Stream Buffer
@@ -160,8 +165,14 @@ class SurveyMissionRunner:
                 crop_zone=crop_zone
             )
 
-            # Stream Telemetry at 250ms rate
             now = time.time()
+
+            # Live terminal progress logging during non-capturing stages
+            if not auto_capture and now - last_progress_print >= 1.5:
+                print(f"  [FLIGHT] {stage.upper()}: Drone at (X={self.cur_x:.1f}m, Y={self.cur_y:.1f}m, Alt={self.cur_z:.1f}m) | Speed: {self.cur_speed:.1f}m/s | Battery: {self.battery_percent:.1f}%")
+                last_progress_print = now
+
+            # Stream Telemetry at 250ms rate
             if now - last_telemetry_time >= (0.25 / self.speed_multiplier):
                 self.client.send_telemetry(
                     mission_id=self.mission_id,
@@ -176,12 +187,12 @@ class SurveyMissionRunner:
                 )
                 last_telemetry_time = now
 
-            # Automatic Continuous Frame Capture (Every 3.0m in Perimeter, Every 2.2m in Interior)
+            # Automatic Continuous Frame Capture
             capture_interval = 3.0 if stage == "perimeter_scan" else 2.2
             if auto_capture and self.dist_since_last_frame >= capture_interval:
                 self._capture_and_send_frame(stage=stage)
 
-            self._sleep(0.08)
+            self._sleep(0.06)
 
     def run_mission(self):
         print(f"\n=======================================================")
@@ -212,7 +223,7 @@ class SurveyMissionRunner:
         self.frames_in_stage = 0
 
         for wp in perimeter_wps:
-            self._fly_smoothly(wp.x, wp.y, wp.z, speed=wp.speed, stage="perimeter_scan", auto_capture=True)
+            self._fly_smoothly(wp.x, wp.y, wp.z, speed=wp.speed, stage="perimeter_scan", auto_capture=False)
 
         stage1_duration = int(time.time() - stage1_start_time)
         stage1_distance = self.total_flight_dist - stage1_start_dist
@@ -295,7 +306,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="KissanVikas Survey Drone Autonomous Mission Runner")
     parser.add_argument("--mission-id", default="66bc1234567890abcdef1234", help="Mission ID")
     parser.add_argument("--drone-id", default="DRONE-001", help="Drone ID")
-    parser.add_argument("--backend-url", default="http://localhost:3000/api/v1", help="Backend API Base URL")
+    parser.add_argument("--backend-url", default=None, help="Backend API Base URL (defaults to auto-discovery)")
     parser.add_argument("--speed", type=float, default=1.0, help="Simulation speed multiplier")
     parser.add_argument("--view-camera", action="store_true", help="Open local OpenCV desktop FPV window")
     parser.add_argument("--port", type=int, default=8080, help="Live camera MJPEG stream port")

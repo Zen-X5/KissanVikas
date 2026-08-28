@@ -1,5 +1,5 @@
-from pydantic import BaseModel
-from typing import Optional
+from typing import List, Optional
+from pydantic import BaseModel, Field
 
 
 class Position(BaseModel):
@@ -9,36 +9,41 @@ class Position(BaseModel):
 
 
 class Orientation(BaseModel):
-    roll_deg: float   #roll  deg means tilting left and right
-    pitch_deg: float  #Pitch deg means up and down rotation
-    yaw_deg: float    #Roll deg means left and right  rotation
+    roll_deg: float = 0.0
+    pitch_deg: float = 0.0
+    yaw_deg: float = 0.0
 
 
 class DronePose(BaseModel):
     position: Position
-    orientation: Orientation
+    orientation: Orientation = Field(default_factory=Orientation)
 
 
 class CameraParameters(BaseModel):
-    fov_deg: float      #Field of view:It means how wide the camera can see.
-    gimbal_pitch_deg: float #This tells us how much the camera is pointing up/down.Important: this is the camera, not the drone.
-    gimbal_yaw_deg: float #This tells us how much the camera is pointing left/right.Important: this is the camera, not the drone.
+    fov_deg: float = 78.0
+    gimbal_pitch_deg: float = -60.0
+    gimbal_yaw_deg: float = 0.0
+
 
 class ImageInfo(BaseModel):
     url: str
-    width: int
-    height: int
+    width: int = 1920
+    height: int = 1080
 
 
 class AnalyzeFrameRequest(BaseModel):
     mission_id: str
+    drone_id: str = "DRONE-001"
     frame_id: str
-    sequence_number: int
-    stage: str
-    timestamp: str
-
+    sequence_number: int = 1
+    stage: str = "interior_scan"
+    timestamp: Optional[str] = None
     image: ImageInfo
-
     drone_pose: DronePose
+    camera: CameraParameters = Field(default_factory=CameraParameters)
 
-    camera: CameraParameters
+
+class BatchAnalyzeRequest(BaseModel):
+    mission_id: str
+    polyhouse_id: str = "PH-DEMO-001"
+    frames: List[AnalyzeFrameRequest]
