@@ -2332,6 +2332,12 @@
       <name>eggplant_bed_012_p08</name>
       <pose>25.00 -3.5 0.25 0 0 0</pose>
     </include>
+    <!-- Autonomous Survey Drone -->
+    <include>
+      <uri>model://survey_drone</uri>
+      <name>survey_drone</name>
+      <pose>-33.5 0 0.1 0 0 0</pose>
+    </include>
 
   </world>
 </sdf>

@@ -11,6 +11,7 @@ def generate_launch_description():
         models_dir = os.path.join(pkg_share, 'models')
         crops_dir = os.path.join(pkg_share, 'models', 'crops')
         crop_beds_dir = os.path.join(pkg_share, 'models', 'crop_beds')
+        survey_drone_dir = os.path.join(pkg_share, 'models', 'survey_drone')
         world_file = os.path.join(pkg_share, 'worlds', 'polyhouse', 'polyhouse.sdf')
     except PackageNotFoundError:
         # Source directory fallback (allows launching directly from workspace)
@@ -18,11 +19,12 @@ def generate_launch_description():
         models_dir = os.path.join(src_dir, 'models')
         crops_dir = os.path.join(src_dir, 'models', 'crops')
         crop_beds_dir = os.path.join(src_dir, 'models', 'crop_beds')
+        survey_drone_dir = os.path.join(src_dir, 'models', 'survey_drone')
         world_file = os.path.join(src_dir, 'worlds', 'polyhouse', 'polyhouse.sdf')
 
     # 2. Configure Gazebo resource paths
     existing_resource_path = os.environ.get('GZ_SIM_RESOURCE_PATH', '')
-    new_resource_path = f"{models_dir}:{crops_dir}:{crop_beds_dir}:{existing_resource_path}".strip(':')
+    new_resource_path = f"{models_dir}:{crops_dir}:{crop_beds_dir}:{survey_drone_dir}:{existing_resource_path}".strip(':')
 
     set_gz_resource_path = SetEnvironmentVariable(
         name='GZ_SIM_RESOURCE_PATH',

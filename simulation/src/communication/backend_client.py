@@ -203,6 +203,16 @@ class BackendDataClient:
         }
         return self._post("/missions/events/landing", payload)
 
+    def send_landed(self, mission_id: str, drone_id: str) -> Dict[str, Any]:
+        """Event: Touchdown completed on landing pad"""
+        payload = {
+            "mission_id": mission_id,
+            "drone_id": drone_id,
+            "status": "landed",
+            "timestamp": self._get_iso_timestamp()
+        }
+        return self._post("/missions/events/landed", payload)
+
     def send_completed(
         self,
         mission_id: str,

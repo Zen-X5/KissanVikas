@@ -10,6 +10,13 @@ import sys
 import time
 from typing import Optional
 
+# Ensure utf-8 output encoding on Windows consoles
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 # Ensure simulation root is in sys.path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
@@ -294,6 +301,11 @@ class SurveyMissionRunner:
 
         self.streamer.stop()
 
+        # ----------------------------------------------------
+        # 6. EXPORT DIGITAL TWIN SNAPSHOT TO TESTING/ FOLDER
+        # ----------------------------------------------------
+        self._export_testing_digital_twin(total_frames, coverage_percent)
+
         print("\n=======================================================")
         print("[SUCCESS] MISSION COMPLETED!")
         print(f"Total Frames Captured: {total_frames}")
@@ -301,6 +313,72 @@ class SurveyMissionRunner:
         print(f"Remaining Battery: {self.battery_percent:.1f}%")
         print(f"Survey Coverage: {coverage_percent:.1f}%")
         print("=======================================================\n")
+
+    def _export_testing_digital_twin(self, total_frames: int, coverage_percent: float):
+        """Fetches latest Digital Twin from Backend / AI or generates local snapshot and saves to testing/ folder."""
+        import json
+        from datetime import datetime, timezone
+
+        try:
+            # simulation/src/mission/mission_runner.py -> workspace root
+            sim_src_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            sim_dir = os.path.dirname(sim_src_dir)
+            repo_root = os.path.dirname(sim_dir)
+            testing_dir = os.path.join(repo_root, "testing")
+            os.makedirs(testing_dir, exist_ok=True)
+
+            timestamp_str = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+            target_filename = f"digital_twin_mission_{self.mission_id}_{timestamp_str}.json"
+            target_path = os.path.join(testing_dir, target_filename)
+            latest_path = os.path.join(testing_dir, "digital_twin_latest.json")
+
+            # Try to fetch live from backend first
+            digital_twin_data = None
+            try:
+                import urllib.request
+                backend_url = getattr(self.client, 'active_backend_url', 'http://localhost:3000/api/v1')
+                with urllib.request.urlopen(f"{backend_url}/digital-twin", timeout=2.0) as resp:
+                    digital_twin_data = json.loads(resp.read().decode('utf-8'))
+            except Exception:
+                pass
+
+            # Fallback to loading root template and augmenting with mission metrics
+            if not digital_twin_data:
+                template_path = os.path.join(repo_root, "digital_twin_complete.json")
+                if os.path.exists(template_path):
+                    with open(template_path, "r", encoding="utf-8") as f:
+                        digital_twin_data = json.load(f)
+                else:
+                    digital_twin_data = {
+                        "polyhouse_id": "POLYHOUSE-01",
+                        "mission_id": self.mission_id,
+                        "drone_id": self.drone_id,
+                        "status": "completed",
+                        "frames_captured": total_frames,
+                        "coverage_percent": coverage_percent
+                    }
+
+            # Update with completed mission metadata
+            if isinstance(digital_twin_data, dict):
+                digital_twin_data["mission_id"] = self.mission_id
+                digital_twin_data["drone_id"] = self.drone_id
+                digital_twin_data["last_mission_completed_at"] = datetime.now(timezone.utc).isoformat()
+                if "polyhouse_metrics" in digital_twin_data:
+                    digital_twin_data["polyhouse_metrics"]["last_survey_at"] = datetime.now(timezone.utc).isoformat()
+                    digital_twin_data["polyhouse_metrics"]["last_frames_captured"] = total_frames
+                    digital_twin_data["polyhouse_metrics"]["last_survey_coverage"] = coverage_percent
+
+            # Write output files to testing/
+            with open(target_path, "w", encoding="utf-8") as f:
+                json.dump(digital_twin_data, f, indent=2)
+            with open(latest_path, "w", encoding="utf-8") as f:
+                json.dump(digital_twin_data, f, indent=2)
+
+            print(f"\n📄 [DIGITAL TWIN SAVED] Reconstructed Digital Twin saved to:")
+            print(f"   ↳ {target_path}")
+            print(f"   ↳ {latest_path}")
+        except Exception as e:
+            print(f"⚠️ [NOTICE] Could not save testing JSON: {e}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="KissanVikas Survey Drone Autonomous Mission Runner")
