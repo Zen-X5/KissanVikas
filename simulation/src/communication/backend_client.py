@@ -66,7 +66,7 @@ class BackendDataClient:
     def __init__(
         self,
         backend_url: Optional[str] = None,
-        timeout_sec: float = 1.5,
+        timeout_sec: float = 5.0,
         enable_http: bool = True,
     ):
         self.candidate_urls = [backend_url.rstrip("/")] if backend_url else get_default_backend_urls()

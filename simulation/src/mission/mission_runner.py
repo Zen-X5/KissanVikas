@@ -67,30 +67,53 @@ class SurveyMissionRunner:
         self.sequence_num = 1
         self.frames_in_stage = 0
         self.dist_since_last_frame = 0.0
+        self._last_gz_sync = 0.0
+        self._sync_in_progress = False
 
     def _sync_gazebo_pose(self, x: float, y: float, z: float, yaw_deg: float):
-        """Updates the 3D drone position in Gazebo GUI asynchronously in the background."""
+        """Updates the 3D drone position in Gazebo GUI smoothly via gz topic / service."""
         import threading
+        now = time.time()
+        if self._sync_in_progress or (now - self._last_gz_sync < 0.04):
+            return
+
+        self._last_gz_sync = now
+        self._sync_in_progress = True
+
         def _do_sync():
             try:
                 import subprocess
                 yaw_rad = math.radians(yaw_deg)
                 qz = math.sin(yaw_rad / 2.0)
                 qw = math.cos(yaw_rad / 2.0)
-                req_str = f'name: "survey_drone", position: {{x: {x:.2f}, y: {y:.2f}, z: {z:.2f}}}, orientation: {{z: {qz:.4f}, w: {qw:.4f}}}'
-                cmd = [
+                pose_str = f'name: "survey_drone", position: {{x: {x:.3f}, y: {y:.3f}, z: {z:.3f}}}, orientation: {{x: 0.0, y: 0.0, z: {qz:.4f}, w: {qw:.4f}}}'
+                
+                # 1. Publish to Gazebo set_pose topic (fastest)
+                topic_cmd = [
+                    'gz', 'topic',
+                    '-t', '/world/polyhouse_world/set_pose',
+                    '-m', 'gz.msgs.Pose',
+                    '-p', pose_str
+                ]
+                subprocess.run(topic_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=0.3)
+
+                # 2. Fallback / supplementary service call
+                service_cmd = [
                     'gz', 'service',
                     '-s', '/world/polyhouse_world/set_pose',
                     '--reqtype', 'gz.msgs.Pose',
                     '--reptype', 'gz.msgs.Boolean',
-                    '--timeout', '50',
-                    '--req', req_str
+                    '--timeout', '200',
+                    '--req', pose_str
                 ]
-                subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=0.1)
+                subprocess.run(service_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=0.3)
             except Exception:
                 pass
+            finally:
+                self._sync_in_progress = False
 
         threading.Thread(target=_do_sync, daemon=True).start()
+
 
     def _sleep(self, duration_sec: float):
         time.sleep(duration_sec / self.speed_multiplier)

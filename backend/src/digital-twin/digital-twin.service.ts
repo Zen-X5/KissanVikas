@@ -1,7 +1,8 @@
 import { Injectable, Logger, OnModuleInit, Optional } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { DigitalTwin, DigitalTwinDocument, BedState, ZoneState } from '../schemas/digital-twin.schema';
+import { DigitalTwin, DigitalTwinDocument, BedState, ZoneState } from './schemas';
+
 
 @Injectable()
 export class DigitalTwinService implements OnModuleInit {
