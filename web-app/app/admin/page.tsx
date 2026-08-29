@@ -54,6 +54,7 @@ export default function AdminDashboard() {
 
   // Form States - Dispatch Mission
   const [dispatchPolyId, setDispatchPolyId] = useState("");
+  const [flightEngine, setFlightEngine] = useState<"sitl" | "direct">("sitl");
   const [generatedMissionId, setGeneratedMissionId] = useState("");
   const [dispatchCommand, setDispatchCommand] = useState<string | null>(null);
   const [isDispatching, setIsDispatching] = useState(false);
@@ -190,6 +191,7 @@ export default function AdminDashboard() {
         requestedBy: custId,
         droneId: "DRONE-001",
         speed: 1.5,
+        mode: flightEngine,
       }),
     });
 
@@ -614,6 +616,60 @@ export default function AdminDashboard() {
               </select>
             </div>
 
+            {/* Flight Engine Selection */}
+            <div>
+              <label className="block text-xs font-medium text-slate-300 mb-2">
+                Flight Controller Engine
+              </label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setFlightEngine("sitl")}
+                  className={`p-4 rounded-2xl border text-left transition-all cursor-pointer ${
+                    flightEngine === "sitl"
+                      ? "bg-cyan-500/10 border-cyan-500/50 shadow-lg shadow-cyan-950/30"
+                      : "bg-slate-950/60 border-slate-800 hover:border-slate-700"
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-1.5">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">🛸</span>
+                      <span className="text-sm font-bold text-white">ArduPilot / PX4 SITL</span>
+                    </div>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                      MAVLink 2.0
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-400">
+                    High-fidelity autopilot firmware simulation. Supports QGroundControl & Mission Planner on UDP 14550.
+                  </p>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setFlightEngine("direct")}
+                  className={`p-4 rounded-2xl border text-left transition-all cursor-pointer ${
+                    flightEngine === "direct"
+                      ? "bg-emerald-500/10 border-emerald-500/50 shadow-lg shadow-emerald-950/30"
+                      : "bg-slate-950/60 border-slate-800 hover:border-slate-700"
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-1.5">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">⚡</span>
+                      <span className="text-sm font-bold text-white">Direct Kinematic Mode</span>
+                    </div>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                      Gazebo Direct
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-400">
+                    Lightweight trajectory engine for rapid dashboard testing & AI vision pipeline sync.
+                  </p>
+                </button>
+              </div>
+            </div>
+
             <button
               onClick={handleDispatchMission}
               disabled={isDispatching}
@@ -623,8 +679,10 @@ export default function AdminDashboard() {
                 <span>⏳ Initializing Flight Process...</span>
               ) : (
                 <>
-                  <span>⚡</span>
-                  <span>Auto-Dispatch Drone Mission Now (1-Click Run)</span>
+                  <span>{flightEngine === "sitl" ? "🛸" : "⚡"}</span>
+                  <span>
+                    Auto-Dispatch Drone Mission Now ({flightEngine === "sitl" ? "ArduPilot SITL Mode" : "Direct Mode"})
+                  </span>
                 </>
               )}
             </button>

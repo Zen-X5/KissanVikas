@@ -25,6 +25,7 @@ from src.camera.live_streamer import LiveCameraStreamer
 from src.communication.backend_client import BackendDataClient
 from src.flight.drone_navigator import SmoothTrajectoryNavigator
 from src.flight.waypoint_planner import WaypointPlanner, Waypoint
+from src.flight.sitl_mavlink_pilot import SitlMavlinkPilot
 
 def determine_crop_zone(x: float, y: float) -> Optional[str]:
     """Classifies current drone coordinates into the respective crop zone."""
@@ -86,7 +87,7 @@ class SurveyMissionRunner:
                 yaw_rad = math.radians(yaw_deg)
                 qz = math.sin(yaw_rad / 2.0)
                 qw = math.cos(yaw_rad / 2.0)
-                pose_str = f'name: "survey_drone", position: {{x: {x:.3f}, y: {y:.3f}, z: {z:.3f}}}, orientation: {{x: 0.0, y: 0.0, z: {qz:.4f}, w: {qw:.4f}}}'
+                pose_str = f'name: "survey_drone" position: {{x: {x:.3f} y: {y:.3f} z: {z:.3f}}} orientation: {{x: 0.0 y: 0.0 z: {qz:.4f} w: {qw:.4f}}}'
                 
                 # 1. Publish to Gazebo set_pose topic (fastest)
                 topic_cmd = [
@@ -96,17 +97,6 @@ class SurveyMissionRunner:
                     '-p', pose_str
                 ]
                 subprocess.run(topic_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=0.3)
-
-                # 2. Fallback / supplementary service call
-                service_cmd = [
-                    'gz', 'service',
-                    '-s', '/world/polyhouse_world/set_pose',
-                    '--reqtype', 'gz.msgs.Pose',
-                    '--reptype', 'gz.msgs.Boolean',
-                    '--timeout', '200',
-                    '--req', pose_str
-                ]
-                subprocess.run(service_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=0.3)
             except Exception:
                 pass
             finally:
@@ -407,6 +397,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="KissanVikas Survey Drone Autonomous Mission Runner")
     parser.add_argument("--mission-id", default="66bc1234567890abcdef1234", help="Mission ID")
     parser.add_argument("--drone-id", default="DRONE-001", help="Drone ID")
+    parser.add_argument("--mode", choices=["direct", "sitl"], default="direct", help="Flight engine: direct (kinematic) or sitl (ArduPilot/PX4 MAVLink)")
+    parser.add_argument("--connection", default="udp:127.0.0.1:14550", help="MAVLink connection string for SITL")
     parser.add_argument("--backend-url", default=None, help="Backend API Base URL (defaults to auto-discovery)")
     parser.add_argument("--speed", type=float, default=1.0, help="Simulation speed multiplier")
     parser.add_argument("--view-camera", action="store_true", help="Open local OpenCV desktop FPV window")
@@ -415,13 +407,28 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    runner = SurveyMissionRunner(
-        mission_id=args.mission_id,
-        drone_id=args.drone_id,
-        backend_url=args.backend_url,
-        enable_http=not args.no_http,
-        speed_multiplier=args.speed,
-        enable_gui_window=args.view_camera,
-        stream_port=args.port
-    )
-    runner.run_mission()
+    if args.mode == "sitl":
+        print(f"🛰️ [ENGINE] Starting in SITL MAVLink Flight Mode...")
+        pilot = SitlMavlinkPilot(
+            connection_str=args.connection,
+            mission_id=args.mission_id,
+            drone_id=args.drone_id,
+            backend_url=args.backend_url,
+            enable_http=not args.no_http,
+            speed_multiplier=args.speed,
+            stream_port=args.port,
+        )
+        pilot.run_survey_mission()
+    else:
+        print(f"⚡ [ENGINE] Starting in Direct Kinematic Gazebo Mode...")
+        runner = SurveyMissionRunner(
+            mission_id=args.mission_id,
+            drone_id=args.drone_id,
+            backend_url=args.backend_url,
+            enable_http=not args.no_http,
+            speed_multiplier=args.speed,
+            enable_gui_window=args.view_camera,
+            stream_port=args.port
+        )
+        runner.run_mission()
+
