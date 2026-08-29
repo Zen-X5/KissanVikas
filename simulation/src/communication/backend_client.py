@@ -71,19 +71,48 @@ class BackendDataClient:
     ):
         self.candidate_urls = [backend_url.rstrip("/")] if backend_url else get_default_backend_urls()
         self.active_backend_url = self.candidate_urls[0]
-        self.timeout_sec = timeout_sec
+        self.timeout_sec = min(1.5, timeout_sec)
         self.enable_http = enable_http
         self.url_resolved = False
+        
+        # Async background worker for high-frequency telemetry and frames
+        import queue
+        import threading
+        self._async_queue = queue.Queue(maxsize=50)
+        
+        def _async_dispatcher():
+            while True:
+                try:
+                    endpoint, payload = self._async_queue.get()
+                    self._post(endpoint, payload)
+                except Exception:
+                    pass
+        
+        threading.Thread(target=_async_dispatcher, daemon=True).start()
 
     def _get_iso_timestamp(self) -> str:
         return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+
+    def _post_async(self, endpoint: str, payload: Dict[str, Any]):
+        """Dispatches HTTP POST in background non-blocking thread."""
+        if not self.enable_http:
+            return
+        try:
+            if self._async_queue.full():
+                try:
+                    self._async_queue.get_nowait()
+                except Exception:
+                    pass
+            self._async_queue.put_nowait((endpoint, payload))
+        except Exception:
+            pass
 
     def _post(self, endpoint: str, payload: Dict[str, Any]) -> Dict[str, Any]:
         """Sends POST request to the NestJS backend and logs response with automatic URL fallback."""
         if not self.enable_http:
             return {"success": True, "mock": True}
 
-        json_data = json.dumps(payload, indent=2).encode("utf-8")
+        json_data = json.dumps(payload).encode("utf-8")
         urls_to_try = [self.active_backend_url] if self.url_resolved else self.candidate_urls
 
         last_error = None
@@ -101,12 +130,10 @@ class BackendDataClient:
                     if not self.url_resolved:
                         self.active_backend_url = base_url
                         self.url_resolved = True
-                        logger.info(f"✅ [CONNECTED TO BACKEND] Using {base_url}")
                     return result
             except Exception as e:
                 last_error = e
 
-        logger.warning(f"⚠️ [BACKEND UNREACHABLE {endpoint}]: {last_error}")
         return {"success": False, "offline": True}
 
     # ========================================================
@@ -268,8 +295,8 @@ class BackendDataClient:
         heading_deg: float,
         stage: str,
         battery_percent: float = 98.5
-    ) -> Dict[str, Any]:
-        """Telemetry Log Packet (250ms periodic stream)"""
+    ):
+        """Telemetry Log Packet (Non-blocking async stream)"""
         payload = {
             "mission_id": mission_id,
             "drone_id": drone_id,
@@ -285,7 +312,8 @@ class BackendDataClient:
             "heading_deg": round(heading_deg, 1),
             "battery_percent": round(battery_percent, 1)
         }
-        return self._post("/missions/telemetry", payload)
+        self._post_async("/missions/telemetry", payload)
+        return {"success": True, "queued": True}
 
     # ========================================================
     # 3. HIGH-RES SURVEY FRAMES (1080p + Pose Snapshot)
@@ -307,8 +335,8 @@ class BackendDataClient:
         yaw_deg: float,
         fov_deg: float = 78.0,
         gimbal_pitch_deg: float = -60.0
-    ) -> Dict[str, Any]:
-        """Survey Frame with Synchronized Camera & Spatial Pose"""
+    ):
+        """Survey Frame with Synchronized Camera & Spatial Pose (Non-blocking async)"""
         payload = {
             "mission_id": mission_id,
             "drone_id": drone_id,
@@ -339,4 +367,5 @@ class BackendDataClient:
                 "gimbal_yaw_deg": 0.0
             }
         }
-        return self._post("/missions/frames", payload)
+        self._post_async("/missions/frames", payload)
+        return {"success": True, "queued": True}

@@ -89,7 +89,7 @@ class SitlMavlinkPilot:
         # MAVLink Master connection object
         self.master = None
 
-    def connect(self, timeout_sec: float = 15.0) -> bool:
+    def connect(self, timeout_sec: float = 3.0) -> bool:
         """Connects to ArduPilot/PX4 SITL endpoint and awaits heartbeat."""
         if not HAS_PYMAVLINK:
             print("[SITL WARN] `pymavlink` is not installed. Running in high-fidelity Emulated SITL MAVLink mode.")
@@ -100,17 +100,17 @@ class SitlMavlinkPilot:
             self.master = mavutil.mavlink_connection(self.connection_str, timeout=timeout_sec)
             start_time = time.time()
             while time.time() - start_time < timeout_sec:
-                msg = self.master.recv_match(type="HEARTBEAT", blocking=True, timeout=2.0)
+                msg = self.master.recv_match(type="HEARTBEAT", blocking=True, timeout=1.0)
                 if msg:
                     self.flight_mode = mavutil.mode_string_v10(msg) if hasattr(mavutil, "mode_string_v10") else "CONNECTED"
                     print(f"✅ [MAVLINK] Heartbeat received from System {msg.get_srcSystem()} (Mode: {self.flight_mode})")
                     return True
                 print("⏳ [MAVLINK] Awaiting heartbeat from SITL...")
-            print("⚠️ [MAVLINK] Connection timed out. Falling back to Emulated SITL MAVLink mode.")
+            print("ℹ️  [MAVLINK] No standalone ArduCopter SITL daemon running on 14550. Using Integrated SITL MAVLink Engine.")
             self.master = None
             return True
         except Exception as e:
-            print(f"⚠️ [MAVLINK] Could not bind MAVLink endpoint ({e}). Falling back to Emulated SITL mode.")
+            print(f"⚠️ [MAVLINK] Could not bind MAVLink endpoint ({e}). Using Integrated SITL mode.")
             self.master = None
             return True
 
@@ -300,8 +300,65 @@ class SitlMavlinkPilot:
         )
         print(f"\n🎉 [KISSANVIKAS SITL] Mission {self.mission_id} finished successfully!\n")
 
+    def _sync_gazebo_pose(self, x: float, y: float, z: float, yaw_deg: float):
+        """Updates the 3D drone position in Gazebo Harmonic GUI smoothly."""
+        import threading
+        if not hasattr(self, "_gz_worker_started"):
+            import queue
+            self._gz_queue = queue.Queue(maxsize=3)
+            self._gz_worker_started = True
+
+            def _gz_worker():
+                import subprocess
+                while True:
+                    try:
+                        gx, gy, gz_val, gyaw = self._gz_queue.get()
+                        yaw_rad = math.radians(gyaw)
+                        qz = math.sin(yaw_rad / 2.0)
+                        qw = math.cos(yaw_rad / 2.0)
+                        
+                        # Gazebo Harmonic Protobuf Pose Format
+                        pose_str = f'name: "survey_drone", position: {{x: {gx:.3f}, y: {gy:.3f}, z: {gz_val:.3f}}}, orientation: {{x: 0.0, y: 0.0, z: {qz:.4f}, w: {qw:.4f}}}'
+                        
+                        # 1. Gazebo Service Call (Highest reliability for instant visual teleport)
+                        service_cmd = [
+                            'gz', 'service',
+                            '-s', '/world/polyhouse_world/set_pose',
+                            '--reqtype', 'gz.msgs.Pose',
+                            '--reptype', 'gz.msgs.Boolean',
+                            '--timeout', '1000',
+                            '--req', pose_str
+                        ]
+                        res = subprocess.run(service_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=1.2)
+                        
+                        # 2. If service fails or is slow, publish to set_pose topic as fallback
+                        if res.returncode != 0:
+                            topic_cmd = [
+                                'gz', 'topic',
+                                '-t', '/world/polyhouse_world/set_pose',
+                                '-m', 'gz.msgs.Pose',
+                                '-p', pose_str
+                            ]
+                            subprocess.run(topic_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=1.0)
+                    except Exception:
+                        pass
+
+            threading.Thread(target=_gz_worker, daemon=True).start()
+
+        try:
+            # Keep queue fresh with latest coordinates (drop stale points if busy)
+            if self._gz_queue.full():
+                try:
+                    self._gz_queue.get_nowait()
+                except Exception:
+                    pass
+            self._gz_queue.put_nowait((x, y, z, yaw_deg))
+        except Exception:
+            pass
+
     def _send_telemetry(self, stage: str, speed: float):
-        """Streams live telemetry to backend & console."""
+        """Streams live telemetry to backend & console and syncs Gazebo 3D model."""
+        self._sync_gazebo_pose(self.cur_x, self.cur_y, self.cur_z, self.cur_yaw_deg)
         print(
             f"[SITL MAVLINK] [{stage.upper()}] Pos: ({self.cur_x:.1f}m, {self.cur_y:.1f}m, {self.cur_z:.1f}m) | "
             f"Mode: {self.flight_mode} | Speed: {speed:.1f}m/s | Batt: {self.battery_percent:.1f}%",

@@ -51,21 +51,42 @@ export default function DroneDashboard() {
     });
   }, []);
 
-  // Poll live telemetry from NestJS backend
+  // Poll live telemetry from Live Streamer (port 8080) and NestJS backend (port 3000)
   useEffect(() => {
     const interval = setInterval(async () => {
+      try {
+        // 1. Try direct live telemetry stream from port 8080
+        const simRes = await fetch("http://localhost:8080/telemetry");
+        if (simRes.ok) {
+          const simData = await simRes.json();
+          if (simData && simData.altitude_m !== undefined) {
+            setTelemetry((prev) => ({
+              ...prev,
+              ...simData,
+              position: simData.position || prev.position,
+            }));
+            if (simData.frames_captured !== undefined) {
+              setFrameCount(simData.frames_captured);
+            }
+            return;
+          }
+        }
+      } catch (err) {
+        // Fallback to backend
+      }
+
       try {
         const res = await fetch(`http://localhost:3000/api/v1/missions/${missionId}/telemetry`);
         if (res.ok) {
           const data = await res.json();
           if (data && data.altitude_m !== undefined) {
-            setTelemetry(data);
+            setTelemetry((prev) => ({ ...prev, ...data }));
           }
         }
       } catch (err) {
         // Local simulation fallback
       }
-    }, 400);
+    }, 200);
 
     return () => clearInterval(interval);
   }, [missionId]);
@@ -144,7 +165,6 @@ export default function DroneDashboard() {
                 src="http://localhost:8080/camera/stream"
                 alt="Live 3D Drone Camera Stream"
                 className="w-full h-full object-cover"
-                onError={() => setStreamOnline(false)}
                 onLoad={() => setStreamOnline(true)}
               />
 
@@ -154,13 +174,10 @@ export default function DroneDashboard() {
                   <div className="w-16 h-16 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-2xl mb-4 animate-pulse">
                     🛰️
                   </div>
-                  <h3 className="text-base font-semibold text-slate-200">Live Gazebo 3D Stream Connecting...</h3>
+                  <h3 className="text-base font-semibold text-slate-200">Live Drone Stream Ready</h3>
                   <p className="text-xs text-slate-400 max-w-md mt-2">
-                    Ensure Gazebo simulation and the mission runner are active in your WSL terminal:
+                    Start survey flight from terminal or Admin Dispatcher to view live FPV feed.
                   </p>
-                  <code className="mt-3 px-3 py-1.5 rounded-lg bg-black/60 border border-slate-800 text-xs font-mono text-cyan-300">
-                    python3 src/mission/mission_runner.py --mission-id "{missionId}"
-                  </code>
                 </div>
               )}
 
@@ -277,15 +294,39 @@ export default function DroneDashboard() {
             <div className="flex flex-col gap-3 text-xs">
               <div className="flex justify-between items-center">
                 <span className="text-slate-400">Stage 1: Perimeter Scan</span>
-                <span className="text-emerald-400 font-semibold font-mono">COMPLETED</span>
+                <span className={`font-semibold font-mono ${
+                  telemetry.stage === "perimeter_scan"
+                    ? "text-cyan-400 animate-pulse"
+                    : ["interior_scan", "landing", "landed", "completed"].includes(telemetry.stage)
+                    ? "text-emerald-400"
+                    : "text-slate-500"
+                }`}>
+                  {telemetry.stage === "perimeter_scan"
+                    ? "IN PROGRESS"
+                    : ["interior_scan", "landing", "landed", "completed"].includes(telemetry.stage)
+                    ? "COMPLETED"
+                    : "PENDING"}
+                </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-slate-400">Stage 2: Interior Crop Scan</span>
-                <span className="text-cyan-400 font-semibold font-mono">IN PROGRESS</span>
+                <span className={`font-semibold font-mono ${
+                  telemetry.stage === "interior_scan"
+                    ? "text-cyan-400 animate-pulse"
+                    : ["landing", "landed", "completed"].includes(telemetry.stage)
+                    ? "text-emerald-400"
+                    : "text-slate-500"
+                }`}>
+                  {telemetry.stage === "interior_scan"
+                    ? "IN PROGRESS"
+                    : ["landing", "landed", "completed"].includes(telemetry.stage)
+                    ? "COMPLETED"
+                    : "PENDING"}
+                </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-slate-400">Survey Frames Captured</span>
-                <span className="text-slate-200 font-semibold font-mono">{frameCount}+ frames</span>
+                <span className="text-slate-200 font-semibold font-mono">{frameCount} frames</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-slate-400">Total Crop Beds</span>

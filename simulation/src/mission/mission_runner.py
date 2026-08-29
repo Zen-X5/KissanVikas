@@ -74,35 +74,57 @@ class SurveyMissionRunner:
     def _sync_gazebo_pose(self, x: float, y: float, z: float, yaw_deg: float):
         """Updates the 3D drone position in Gazebo GUI smoothly via gz topic / service."""
         import threading
-        now = time.time()
-        if self._sync_in_progress or (now - self._last_gz_sync < 0.04):
-            return
+        if not hasattr(self, "_gz_worker_started"):
+            import queue
+            self._gz_queue = queue.Queue(maxsize=3)
+            self._gz_worker_started = True
 
-        self._last_gz_sync = now
-        self._sync_in_progress = True
-
-        def _do_sync():
-            try:
+            def _gz_worker():
                 import subprocess
-                yaw_rad = math.radians(yaw_deg)
-                qz = math.sin(yaw_rad / 2.0)
-                qw = math.cos(yaw_rad / 2.0)
-                pose_str = f'name: "survey_drone" position: {{x: {x:.3f} y: {y:.3f} z: {z:.3f}}} orientation: {{x: 0.0 y: 0.0 z: {qz:.4f} w: {qw:.4f}}}'
-                
-                # 1. Publish to Gazebo set_pose topic (fastest)
-                topic_cmd = [
-                    'gz', 'topic',
-                    '-t', '/world/polyhouse_world/set_pose',
-                    '-m', 'gz.msgs.Pose',
-                    '-p', pose_str
-                ]
-                subprocess.run(topic_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=0.3)
-            except Exception:
-                pass
-            finally:
-                self._sync_in_progress = False
+                while True:
+                    try:
+                        gx, gy, gz_val, gyaw = self._gz_queue.get()
+                        yaw_rad = math.radians(gyaw)
+                        qz = math.sin(yaw_rad / 2.0)
+                        qw = math.cos(yaw_rad / 2.0)
+                        
+                        # Gazebo Harmonic Protobuf Pose Format
+                        pose_str = f'name: "survey_drone", position: {{x: {gx:.3f}, y: {gy:.3f}, z: {gz_val:.3f}}}, orientation: {{x: 0.0, y: 0.0, z: {qz:.4f}, w: {qw:.4f}}}'
+                        
+                        # 1. Gazebo Service Call (Highest reliability for instant visual teleport)
+                        service_cmd = [
+                            'gz', 'service',
+                            '-s', '/world/polyhouse_world/set_pose',
+                            '--reqtype', 'gz.msgs.Pose',
+                            '--reptype', 'gz.msgs.Boolean',
+                            '--timeout', '1000',
+                            '--req', pose_str
+                        ]
+                        res = subprocess.run(service_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=1.2)
+                        
+                        # 2. If service fails or is slow, publish to set_pose topic as fallback
+                        if res.returncode != 0:
+                            topic_cmd = [
+                                'gz', 'topic',
+                                '-t', '/world/polyhouse_world/set_pose',
+                                '-m', 'gz.msgs.Pose',
+                                '-p', pose_str
+                            ]
+                            subprocess.run(topic_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=1.0)
+                    except Exception:
+                        pass
 
-        threading.Thread(target=_do_sync, daemon=True).start()
+            threading.Thread(target=_gz_worker, daemon=True).start()
+
+        try:
+            if self._gz_queue.full():
+                try:
+                    self._gz_queue.get_nowait()
+                except Exception:
+                    pass
+            self._gz_queue.put_nowait((x, y, z, yaw_deg))
+        except Exception:
+            pass
 
 
     def _sleep(self, duration_sec: float):
