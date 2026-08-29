@@ -40,27 +40,31 @@ export class MissionsController {
       polyhouseId?: string;
       requestedBy?: string;
       speed?: number;
+      mode?: 'direct' | 'sitl';
     },
   ) {
     const missionId = body.missionId || `MISSION-${Date.now().toString().slice(-6)}`;
     const droneId = body.droneId || 'DRONE-001';
     const speed = body.speed || 1.5;
+    const mode = body.mode || 'sitl';
 
     // Record initial planned event in DB
     await this.missionsService.recordEvent(missionId, 'planned', {
       drone_id: droneId,
       polyhouseId: body.polyhouseId,
       requestedBy: body.requestedBy,
+      mode: mode,
       timestamp: new Date().toISOString(),
     });
 
     // Auto-spawn the simulation flight process in background
-    const spawnResult = this.missionsService.spawnSimulationProcess(missionId, droneId, speed);
+    const spawnResult = this.missionsService.spawnSimulationProcess(missionId, droneId, speed, mode);
 
     return {
       success: true,
       mission_id: missionId,
       drone_id: droneId,
+      mode: mode,
       message: spawnResult.message,
       command: spawnResult.command,
     };

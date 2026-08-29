@@ -375,6 +375,7 @@ export class MissionsService {
     missionId: string,
     droneId: string = 'DRONE-001',
     speed: number = 1.5,
+    mode: 'direct' | 'sitl' = 'sitl',
   ): { success: boolean; message: string; command: string } {
     const logs: string[] = [];
     this.missionLogs.set(missionId, logs);
@@ -392,6 +393,8 @@ export class MissionsService {
           missionId,
           '--drone-id',
           droneId,
+          '--mode',
+          mode,
           '--speed',
           speed.toString(),
         ]
@@ -402,13 +405,15 @@ export class MissionsService {
           missionId,
           '--drone-id',
           droneId,
+          '--mode',
+          mode,
           '--speed',
           speed.toString(),
         ];
 
     const displayCmd = `${command} ${args.join(' ')}`;
-    this.logger.log(`🚁 [AUTONOMOUS SPAWN] Launching drone mission ${missionId} via: ${displayCmd}`);
-    logs.push(`[SYSTEM] Spawning drone simulation runner for mission ${missionId}...`);
+    this.logger.log(`🚁 [AUTONOMOUS SPAWN] Launching drone mission ${missionId} (${mode.toUpperCase()} mode) via: ${displayCmd}`);
+    logs.push(`[SYSTEM] Spawning drone simulation runner for mission ${missionId} [Engine: ${mode.toUpperCase()}]...`);
     logs.push(`[COMMAND] ${displayCmd}`);
 
     try {
