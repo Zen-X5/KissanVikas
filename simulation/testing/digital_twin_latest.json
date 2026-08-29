@@ -1,0 +1,7 @@
+{
+  "polyhouse_id": "POLYHOUSE-01",
+  "mission_id": "MISSION-VISION-001",
+  "drone_id": "DRONE-001",
+  "navigation_mode": "vision_guided_closed_loop",
+  "last_mission_completed_at": "2026-08-28T14:47:39.610467+00:00"
+}

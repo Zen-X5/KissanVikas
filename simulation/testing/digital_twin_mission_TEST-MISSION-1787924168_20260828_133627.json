@@ -1,0 +1,9 @@
+{
+  "polyhouse_id": "POLYHOUSE-01",
+  "mission_id": "TEST-MISSION-1787924168",
+  "drone_id": "DRONE-001",
+  "status": "completed",
+  "frames_captured": 288,
+  "coverage_percent": 97.2,
+  "last_mission_completed_at": "2026-08-28T13:36:30.036855+00:00"
+}

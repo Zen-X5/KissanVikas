@@ -16,6 +16,12 @@ export class CloudinaryService {
     const apiSecret = this.configService.get<string>('CLOUDINARY_API_SECRET');
 
     if (cloudName && apiKey && apiSecret && !cloudName.includes('your_cloud_name')) {
+      cloudinary.config({
+        cloud_name: cloudName,
+        api_key: apiKey,
+        api_secret: apiSecret,
+        secure: true,
+      });
       this.isCloudinaryConfigured = true;
       this.logger.log(`☁️ [CLOUDINARY] Cloudinary initialized for cloud: "${cloudName}"`);
     } else {
@@ -25,8 +31,8 @@ export class CloudinaryService {
 
   /**
    * Uploads an image to Cloudinary if configured; otherwise returns the local URL.
-   * @param localUrl e.g. "/media/surveys/66bc1234.../F-000001.jpg"
-   * @param missionId e.g. "66bc1234567890abcdef1234"
+   * @param localUrl e.g. "/media/surveys/MISSION-996924/F-000001.jpg"
+   * @param missionId e.g. "MISSION-996924"
    * @param frameId e.g. "F-000001"
    */
   async processFrameImage(localUrl: string, missionId: string, frameId: string): Promise<string> {
@@ -35,11 +41,20 @@ export class CloudinaryService {
     }
 
     try {
-      const baseDir = path.dirname(path.dirname(path.dirname(path.dirname(__filename))));
-      const relativePath = localUrl.startsWith('/') ? localUrl.slice(1) : localUrl;
-      const physicalPath = path.join(baseDir, 'simulation', relativePath);
+      const cleanRelPath = localUrl.startsWith('/') ? localUrl.slice(1) : localUrl;
 
-      if (fs.existsSync(physicalPath)) {
+      // Check candidate paths for simulation media file
+      const candidatePaths = [
+        path.resolve(process.cwd(), '..', 'simulation', cleanRelPath),
+        path.resolve(process.cwd(), 'simulation', cleanRelPath),
+        path.resolve('D:/KissanVikas/simulation', cleanRelPath),
+        path.resolve(__dirname, '../../../../simulation', cleanRelPath),
+        path.resolve(__dirname, '../../../../../simulation', cleanRelPath),
+      ];
+
+      const physicalPath = candidatePaths.find((p) => fs.existsSync(p));
+
+      if (physicalPath) {
         const result: UploadApiResponse = await cloudinary.uploader.upload(physicalPath, {
           folder: `kissanvikas/surveys/${missionId}`,
           public_id: frameId,
@@ -53,8 +68,10 @@ export class CloudinaryService {
         );
 
         return result.secure_url;
+      } else {
+        this.logger.warn(`[CLOUDINARY] Could not find local frame on disk for ${localUrl}`);
       }
-    } catch (err) {
+    } catch (err: any) {
       this.logger.warn(`⚠️ Cloudinary upload failed for ${frameId} (${err.message}). Using local URL fallback.`);
     }
 

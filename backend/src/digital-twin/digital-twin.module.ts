@@ -2,7 +2,11 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { DigitalTwinController } from './digital-twin.controller';
 import { DigitalTwinService } from './digital-twin.service';
-import { DigitalTwin, DigitalTwinSchema } from '../schemas/digital-twin.schema';
+import { DigitalTwin, DigitalTwinSchema } from './schemas';
+
+
+
+
 
 @Module({
   imports: [

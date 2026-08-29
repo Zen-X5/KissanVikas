@@ -5,6 +5,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MissionsModule } from './missions/missions.module';
 import { DigitalTwinModule } from './digital-twin/digital-twin.module';
+import { UsersModule } from './users/users.module';
+import { PolyhouseModule } from './polyhouse/polyhouse.module';
+import { SessionModule } from './session/session.module';
 
 @Module({
   imports: [
@@ -20,9 +23,13 @@ import { DigitalTwinModule } from './digital-twin/digital-twin.module';
       }),
       inject: [ConfigService],
     }),
+    UsersModule,
+    PolyhouseModule,
     MissionsModule,
     DigitalTwinModule,
+    SessionModule,
   ],
+
   controllers: [AppController],
   providers: [AppService],
 })

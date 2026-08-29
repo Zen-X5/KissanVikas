@@ -10,6 +10,13 @@ import sys
 import time
 from typing import Optional
 
+# Ensure utf-8 output encoding on Windows consoles
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 # Ensure simulation root is in sys.path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
@@ -32,7 +39,7 @@ class SurveyMissionRunner:
         self,
         mission_id: str = "66bc1234567890abcdef1234",
         drone_id: str = "DRONE-001",
-        backend_url: str = "http://localhost:3000/api/v1",
+        backend_url: Optional[str] = None,
         enable_http: bool = True,
         speed_multiplier: float = 1.0,
         enable_gui_window: bool = False,
@@ -60,26 +67,53 @@ class SurveyMissionRunner:
         self.sequence_num = 1
         self.frames_in_stage = 0
         self.dist_since_last_frame = 0.0
+        self._last_gz_sync = 0.0
+        self._sync_in_progress = False
 
     def _sync_gazebo_pose(self, x: float, y: float, z: float, yaw_deg: float):
-        """Updates the 3D drone position in Gazebo GUI in real-time."""
-        try:
-            import subprocess
-            yaw_rad = math.radians(yaw_deg)
-            qz = math.sin(yaw_rad / 2.0)
-            qw = math.cos(yaw_rad / 2.0)
-            req_str = f'name: "survey_drone", position: {{x: {x:.2f}, y: {y:.2f}, z: {z:.2f}}}, orientation: {{z: {qz:.4f}, w: {qw:.4f}}}'
-            cmd = [
-                'gz', 'service',
-                '-s', '/world/polyhouse_world/set_pose',
-                '--reqtype', 'gz.msgs.Pose',
-                '--reptype', 'gz.msgs.Boolean',
-                '--timeout', '30',
-                '--req', req_str
-            ]
-            subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        except Exception:
-            pass
+        """Updates the 3D drone position in Gazebo GUI smoothly via gz topic / service."""
+        import threading
+        now = time.time()
+        if self._sync_in_progress or (now - self._last_gz_sync < 0.04):
+            return
+
+        self._last_gz_sync = now
+        self._sync_in_progress = True
+
+        def _do_sync():
+            try:
+                import subprocess
+                yaw_rad = math.radians(yaw_deg)
+                qz = math.sin(yaw_rad / 2.0)
+                qw = math.cos(yaw_rad / 2.0)
+                pose_str = f'name: "survey_drone", position: {{x: {x:.3f}, y: {y:.3f}, z: {z:.3f}}}, orientation: {{x: 0.0, y: 0.0, z: {qz:.4f}, w: {qw:.4f}}}'
+                
+                # 1. Publish to Gazebo set_pose topic (fastest)
+                topic_cmd = [
+                    'gz', 'topic',
+                    '-t', '/world/polyhouse_world/set_pose',
+                    '-m', 'gz.msgs.Pose',
+                    '-p', pose_str
+                ]
+                subprocess.run(topic_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=0.3)
+
+                # 2. Fallback / supplementary service call
+                service_cmd = [
+                    'gz', 'service',
+                    '-s', '/world/polyhouse_world/set_pose',
+                    '--reqtype', 'gz.msgs.Pose',
+                    '--reptype', 'gz.msgs.Boolean',
+                    '--timeout', '200',
+                    '--req', pose_str
+                ]
+                subprocess.run(service_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=0.3)
+            except Exception:
+                pass
+            finally:
+                self._sync_in_progress = False
+
+        threading.Thread(target=_do_sync, daemon=True).start()
+
 
     def _sleep(self, duration_sec: float):
         time.sleep(duration_sec / self.speed_multiplier)
@@ -127,6 +161,7 @@ class SurveyMissionRunner:
         )
 
         last_telemetry_time = 0.0
+        last_progress_print = 0.0
 
         for step_x, step_y, step_z, heading in micro_steps:
             dx = step_x - self.cur_x
@@ -143,7 +178,7 @@ class SurveyMissionRunner:
             self.cur_speed = speed
             self.battery_percent = max(5.0, self.battery_percent - 0.005)
 
-            # Update Gazebo 3D GUI
+            # Update Gazebo 3D GUI asynchronously
             self._sync_gazebo_pose(self.cur_x, self.cur_y, self.cur_z, self.cur_heading)
 
             # Update Live Video Stream Buffer
@@ -160,8 +195,14 @@ class SurveyMissionRunner:
                 crop_zone=crop_zone
             )
 
-            # Stream Telemetry at 250ms rate
             now = time.time()
+
+            # Live terminal progress logging during non-capturing stages
+            if not auto_capture and now - last_progress_print >= 1.5:
+                print(f"  [FLIGHT] {stage.upper()}: Drone at (X={self.cur_x:.1f}m, Y={self.cur_y:.1f}m, Alt={self.cur_z:.1f}m) | Speed: {self.cur_speed:.1f}m/s | Battery: {self.battery_percent:.1f}%")
+                last_progress_print = now
+
+            # Stream Telemetry at 250ms rate
             if now - last_telemetry_time >= (0.25 / self.speed_multiplier):
                 self.client.send_telemetry(
                     mission_id=self.mission_id,
@@ -176,12 +217,12 @@ class SurveyMissionRunner:
                 )
                 last_telemetry_time = now
 
-            # Automatic Continuous Frame Capture (Every 3.0m in Perimeter, Every 2.2m in Interior)
+            # Automatic Continuous Frame Capture
             capture_interval = 3.0 if stage == "perimeter_scan" else 2.2
             if auto_capture and self.dist_since_last_frame >= capture_interval:
                 self._capture_and_send_frame(stage=stage)
 
-            self._sleep(0.08)
+            self._sleep(0.06)
 
     def run_mission(self):
         print(f"\n=======================================================")
@@ -212,7 +253,7 @@ class SurveyMissionRunner:
         self.frames_in_stage = 0
 
         for wp in perimeter_wps:
-            self._fly_smoothly(wp.x, wp.y, wp.z, speed=wp.speed, stage="perimeter_scan", auto_capture=True)
+            self._fly_smoothly(wp.x, wp.y, wp.z, speed=wp.speed, stage="perimeter_scan", auto_capture=False)
 
         stage1_duration = int(time.time() - stage1_start_time)
         stage1_distance = self.total_flight_dist - stage1_start_dist
@@ -283,6 +324,11 @@ class SurveyMissionRunner:
 
         self.streamer.stop()
 
+        # ----------------------------------------------------
+        # 6. EXPORT DIGITAL TWIN SNAPSHOT TO TESTING/ FOLDER
+        # ----------------------------------------------------
+        self._export_testing_digital_twin(total_frames, coverage_percent)
+
         print("\n=======================================================")
         print("[SUCCESS] MISSION COMPLETED!")
         print(f"Total Frames Captured: {total_frames}")
@@ -291,11 +337,77 @@ class SurveyMissionRunner:
         print(f"Survey Coverage: {coverage_percent:.1f}%")
         print("=======================================================\n")
 
+    def _export_testing_digital_twin(self, total_frames: int, coverage_percent: float):
+        """Fetches latest Digital Twin from Backend / AI or generates local snapshot and saves to testing/ folder."""
+        import json
+        from datetime import datetime, timezone
+
+        try:
+            # simulation/src/mission/mission_runner.py -> workspace root
+            sim_src_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            sim_dir = os.path.dirname(sim_src_dir)
+            repo_root = os.path.dirname(sim_dir)
+            testing_dir = os.path.join(repo_root, "testing")
+            os.makedirs(testing_dir, exist_ok=True)
+
+            timestamp_str = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+            target_filename = f"digital_twin_mission_{self.mission_id}_{timestamp_str}.json"
+            target_path = os.path.join(testing_dir, target_filename)
+            latest_path = os.path.join(testing_dir, "digital_twin_latest.json")
+
+            # Try to fetch live from backend first
+            digital_twin_data = None
+            try:
+                import urllib.request
+                backend_url = getattr(self.client, 'active_backend_url', 'http://localhost:3000/api/v1')
+                with urllib.request.urlopen(f"{backend_url}/digital-twin", timeout=2.0) as resp:
+                    digital_twin_data = json.loads(resp.read().decode('utf-8'))
+            except Exception:
+                pass
+
+            # Fallback to loading root template and augmenting with mission metrics
+            if not digital_twin_data:
+                template_path = os.path.join(repo_root, "digital_twin_complete.json")
+                if os.path.exists(template_path):
+                    with open(template_path, "r", encoding="utf-8") as f:
+                        digital_twin_data = json.load(f)
+                else:
+                    digital_twin_data = {
+                        "polyhouse_id": "POLYHOUSE-01",
+                        "mission_id": self.mission_id,
+                        "drone_id": self.drone_id,
+                        "status": "completed",
+                        "frames_captured": total_frames,
+                        "coverage_percent": coverage_percent
+                    }
+
+            # Update with completed mission metadata
+            if isinstance(digital_twin_data, dict):
+                digital_twin_data["mission_id"] = self.mission_id
+                digital_twin_data["drone_id"] = self.drone_id
+                digital_twin_data["last_mission_completed_at"] = datetime.now(timezone.utc).isoformat()
+                if "polyhouse_metrics" in digital_twin_data:
+                    digital_twin_data["polyhouse_metrics"]["last_survey_at"] = datetime.now(timezone.utc).isoformat()
+                    digital_twin_data["polyhouse_metrics"]["last_frames_captured"] = total_frames
+                    digital_twin_data["polyhouse_metrics"]["last_survey_coverage"] = coverage_percent
+
+            # Write output files to testing/
+            with open(target_path, "w", encoding="utf-8") as f:
+                json.dump(digital_twin_data, f, indent=2)
+            with open(latest_path, "w", encoding="utf-8") as f:
+                json.dump(digital_twin_data, f, indent=2)
+
+            print(f"\n📄 [DIGITAL TWIN SAVED] Reconstructed Digital Twin saved to:")
+            print(f"   ↳ {target_path}")
+            print(f"   ↳ {latest_path}")
+        except Exception as e:
+            print(f"⚠️ [NOTICE] Could not save testing JSON: {e}")
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="KissanVikas Survey Drone Autonomous Mission Runner")
     parser.add_argument("--mission-id", default="66bc1234567890abcdef1234", help="Mission ID")
     parser.add_argument("--drone-id", default="DRONE-001", help="Drone ID")
-    parser.add_argument("--backend-url", default="http://localhost:3000/api/v1", help="Backend API Base URL")
+    parser.add_argument("--backend-url", default=None, help="Backend API Base URL (defaults to auto-discovery)")
     parser.add_argument("--speed", type=float, default=1.0, help="Simulation speed multiplier")
     parser.add_argument("--view-camera", action="store_true", help="Open local OpenCV desktop FPV window")
     parser.add_argument("--port", type=int, default=8080, help="Live camera MJPEG stream port")

@@ -1,7 +1,8 @@
 import { Injectable, Logger, OnModuleInit, Optional } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { DigitalTwin, DigitalTwinDocument, BedState, ZoneState } from '../schemas/digital-twin.schema';
+import { DigitalTwin, DigitalTwinDocument, BedState, ZoneState } from './schemas';
+
 
 @Injectable()
 export class DigitalTwinService implements OnModuleInit {
@@ -59,9 +60,8 @@ export class DigitalTwinService implements OnModuleInit {
     const northYRows = [3.5, 5.5, 7.5, 9.5, 11.5, 13.5];
     const southYRows = [-3.5, -5.5, -7.5, -9.5, -11.5, -13.5];
 
-    // Zone A (North-West: Tomato, Beds 1-12) & Zone B (North-East: Capsicum, Beds 1-12)
+    // Zone A (Tomato) & Zone B (Capsicum)
     northYRows.forEach((y, rIdx) => {
-      // West Tomato bed
       beds.push({
         bed_id: `BED-TOM-${(rIdx * 2 + 1).toString().padStart(2, '0')}`,
         zone_id: 'ZONE_A',
@@ -93,12 +93,11 @@ export class DigitalTwinService implements OnModuleInit {
         detected_issues: [],
       });
 
-      // East Capsicum bed
       beds.push({
         bed_id: `BED-CAP-${(rIdx * 2 + 1).toString().padStart(2, '0')}`,
         zone_id: 'ZONE_B',
         crop_type: 'capsicum',
-        variety: 'Indra Bell Pepper (Yellow & Red)',
+        variety: 'Indra Bell Pepper',
         row_index: rIdx + 1,
         coordinates: { x_min: 3.0, x_max: 14.0, y_min: y - 0.6, y_max: y + 0.6, z_height: 0.85 },
         plant_count: 28,
@@ -113,7 +112,7 @@ export class DigitalTwinService implements OnModuleInit {
         bed_id: `BED-CAP-${(rIdx * 2 + 2).toString().padStart(2, '0')}`,
         zone_id: 'ZONE_B',
         crop_type: 'capsicum',
-        variety: 'Indra Bell Pepper (Yellow & Red)',
+        variety: 'Indra Bell Pepper',
         row_index: rIdx + 1,
         coordinates: { x_min: 15.0, x_max: 26.0, y_min: y - 0.6, y_max: y + 0.6, z_height: 0.85 },
         plant_count: 28,
@@ -126,9 +125,8 @@ export class DigitalTwinService implements OnModuleInit {
       });
     });
 
-    // Zone C (South-West: Cucumber) & Zone D (South-East: Eggplant)
+    // Zone C (Cucumber) & Zone D (Eggplant)
     southYRows.forEach((y, rIdx) => {
-      // West Cucumber bed
       beds.push({
         bed_id: `BED-CUC-${(rIdx * 2 + 1).toString().padStart(2, '0')}`,
         zone_id: 'ZONE_C',
@@ -160,7 +158,6 @@ export class DigitalTwinService implements OnModuleInit {
         detected_issues: [],
       });
 
-      // East Eggplant bed
       beds.push({
         bed_id: `BED-EGG-${(rIdx * 2 + 1).toString().padStart(2, '0')}`,
         zone_id: 'ZONE_D',
@@ -220,6 +217,44 @@ export class DigitalTwinService implements OnModuleInit {
         this.logger.warn(`Digital Twin initialized in memory fallback: ${err.message}`);
       }
     }
+  }
+
+  /**
+   * Updates the digital twin directly from Sahid's AI Services Spatial Twin JSON output.
+   */
+  async updateFromSpatialTwin(spatialTwin: any) {
+    const summary = spatialTwin?.summary || {};
+    const objects = spatialTwin?.objects || [];
+
+    const existing = await this.getDigitalTwin();
+    const updated = {
+      ...existing,
+      polyhouse_metrics: {
+        overall_health_score: summary.overall_health_score ?? existing?.polyhouse_metrics?.overall_health_score ?? 0.96,
+        total_beds: summary.total_beds ?? existing?.polyhouse_metrics?.total_beds ?? 48,
+        total_crops_detected: summary.total_crops_detected ?? objects.filter((o: any) => o.type === 'crop').length,
+        total_area_sqm: 1800.0,
+        last_survey_at: new Date(),
+      },
+      spatial_twin_raw: spatialTwin,
+    };
+
+    this.memoryDigitalTwin = updated;
+
+    if (this.digitalTwinModel) {
+      try {
+        await this.digitalTwinModel.findOneAndUpdate(
+          { polyhouse_id: 'POLYHOUSE-01' },
+          { $set: updated },
+          { upsert: true, new: true }
+        );
+        this.logger.log('🌟 [DIGITAL TWIN UPDATED] Synced latest AI Spatial Twin to MongoDB Atlas');
+      } catch (err) {
+        this.logger.warn(`Digital twin update saved in memory: ${err.message}`);
+      }
+    }
+
+    return updated;
   }
 
   async getDigitalTwin() {

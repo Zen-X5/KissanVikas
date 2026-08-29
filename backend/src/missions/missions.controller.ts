@@ -29,8 +29,58 @@ export class MissionsController {
   }
 
   // ----------------------------------------------------
+  // 1.5. AUTONOMOUS MISSION DISPATCH & LIVE LOG STREAMING
+  // ----------------------------------------------------
+  @Post('dispatch')
+  async dispatchMission(
+    @Body()
+    body: {
+      missionId?: string;
+      droneId?: string;
+      polyhouseId?: string;
+      requestedBy?: string;
+      speed?: number;
+    },
+  ) {
+    const missionId = body.missionId || `MISSION-${Date.now().toString().slice(-6)}`;
+    const droneId = body.droneId || 'DRONE-001';
+    const speed = body.speed || 1.5;
+
+    // Record initial planned event in DB
+    await this.missionsService.recordEvent(missionId, 'planned', {
+      drone_id: droneId,
+      polyhouseId: body.polyhouseId,
+      requestedBy: body.requestedBy,
+      timestamp: new Date().toISOString(),
+    });
+
+    // Auto-spawn the simulation flight process in background
+    const spawnResult = this.missionsService.spawnSimulationProcess(missionId, droneId, speed);
+
+    return {
+      success: true,
+      mission_id: missionId,
+      drone_id: droneId,
+      message: spawnResult.message,
+      command: spawnResult.command,
+    };
+  }
+
+  @Get(':id/logs')
+  getMissionLogs(@Param('id') id: string) {
+    const logs = this.missionsService.getMissionLogs(id);
+    return {
+      success: true,
+      mission_id: id,
+      total_lines: logs.length,
+      logs: logs,
+    };
+  }
+
+  // ----------------------------------------------------
   // 2. LIFECYCLE EVENTS HANDSHAKE
   // ----------------------------------------------------
+
   @Post('events/takeoff')
   async handleTakeoff(@Body() payload: any) {
     await this.missionsService.recordEvent(payload.mission_id, 'takeoff', payload);

@@ -5,24 +5,29 @@ from launch.actions import DeclareLaunchArgument, ExecuteProcess, SetEnvironment
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 
 def generate_launch_description():
-    # 1. Locate package or fallback to source directory
-    try:
-        pkg_share = get_package_share_directory('kissanvikas_sim')
-        models_dir = os.path.join(pkg_share, 'models')
-        crops_dir = os.path.join(pkg_share, 'models', 'crops')
-        crop_beds_dir = os.path.join(pkg_share, 'models', 'crop_beds')
-        world_file = os.path.join(pkg_share, 'worlds', 'polyhouse', 'polyhouse.sdf')
-    except PackageNotFoundError:
-        # Source directory fallback (allows launching directly from workspace)
-        src_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        models_dir = os.path.join(src_dir, 'models')
-        crops_dir = os.path.join(src_dir, 'models', 'crops')
-        crop_beds_dir = os.path.join(src_dir, 'models', 'crop_beds')
-        world_file = os.path.join(src_dir, 'worlds', 'polyhouse', 'polyhouse.sdf')
+    # 1. Always prioritize live source directory for instant updates
+    src_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    models_dir = os.path.join(src_dir, 'models')
+    crops_dir = os.path.join(src_dir, 'models', 'crops')
+    crop_beds_dir = os.path.join(src_dir, 'models', 'crop_beds')
+    survey_drone_dir = os.path.join(src_dir, 'models', 'survey_drone')
+    world_file = os.path.join(src_dir, 'worlds', 'polyhouse', 'polyhouse.sdf')
+
+    # Fallback to pkg_share if launched from system install
+    if not os.path.exists(world_file):
+        try:
+            pkg_share = get_package_share_directory('kissanvikas_sim')
+            models_dir = os.path.join(pkg_share, 'models')
+            crops_dir = os.path.join(pkg_share, 'models', 'crops')
+            crop_beds_dir = os.path.join(pkg_share, 'models', 'crop_beds')
+            survey_drone_dir = os.path.join(pkg_share, 'models', 'survey_drone')
+            world_file = os.path.join(pkg_share, 'worlds', 'polyhouse', 'polyhouse.sdf')
+        except PackageNotFoundError:
+            pass
 
     # 2. Configure Gazebo resource paths
     existing_resource_path = os.environ.get('GZ_SIM_RESOURCE_PATH', '')
-    new_resource_path = f"{models_dir}:{crops_dir}:{crop_beds_dir}:{existing_resource_path}".strip(':')
+    new_resource_path = f"{models_dir}:{crops_dir}:{crop_beds_dir}:{survey_drone_dir}:{existing_resource_path}".strip(':')
 
     set_gz_resource_path = SetEnvironmentVariable(
         name='GZ_SIM_RESOURCE_PATH',
@@ -81,3 +86,11 @@ def generate_launch_description():
         declare_headless_arg,
         gz_sim_process
     ])
+
+if __name__ == '__main__':
+    import sys
+    from launch import LaunchService
+    ls = LaunchService(argv=sys.argv[1:])
+    ls.include_launch_description(generate_launch_description())
+    sys.exit(ls.run())
+

@@ -89,8 +89,19 @@ class LiveCameraStreamer:
             print(f"[CAMERA STREAMER WARNING] Could not bind port {self.port}: {e}")
 
     def _start_ros_camera_subscriber(self):
-        """Subscribes to the real 3D Gazebo / ROS 2 camera topic."""
+        """Subscribes to the real 3D Gazebo / ROS 2 camera topic and auto-starts bridge if needed."""
         try:
+            import subprocess
+            # Auto-spawn ros_gz_bridge for camera if not already bridged
+            try:
+                bridge_cmd = [
+                    "ros2", "run", "ros_gz_bridge", "parameter_bridge",
+                    "/kissanvikas/drone/camera/image_raw@sensor_msgs/msg/Image[gz.msgs.Image"
+                ]
+                self.bridge_proc = subprocess.Popen(bridge_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            except Exception:
+                self.bridge_proc = None
+
             import rclpy
             from rclpy.node import Node
             from sensor_msgs.msg import Image as RosImage
@@ -99,6 +110,7 @@ class LiveCameraStreamer:
                 rclpy.init()
 
             node = Node("kissanvikas_3d_web_streamer")
+
 
             def on_camera_frame(msg: RosImage):
                 # Convert raw Gazebo 3D camera bytes to JPEG

@@ -1,5 +1,5 @@
+import math
 from typing import List
-
 from app.schemas.spatial_twin import (
     ObjectType,
     RelationshipType,
@@ -8,109 +8,70 @@ from app.schemas.spatial_twin import (
 )
 
 
-def build_relationships(
-    objects: List[SpatialObject],
-) -> List[SpatialRelationship]:
-    """
-    Build basic spatial relationships between objects.
+def calculate_distance(obj_a: SpatialObject, obj_b: SpatialObject) -> float:
+    """Computes Euclidean 2D ground distance between two spatial objects."""
+    dx = obj_a.position.x_m - obj_b.position.x_m
+    dy = obj_a.position.y_m - obj_b.position.y_m
+    return math.sqrt(dx**2 + dy**2)
 
-    Current MVP relationships:
-        crop -> belongs_to -> bed
-        bed  -> inside    -> zone
-        zone -> inside    -> polyhouse
-    """
 
+def build_relationships(objects: List[SpatialObject]) -> List[SpatialRelationship]:
+    """
+    Builds topological graph relationships between polyhouse entities:
+    - Polyhouse contains Zones
+    - Zones contain Beds (inside)
+    - Beds contain Crops (belongs_to)
+    """
     relationships: List[SpatialRelationship] = []
 
-    for source in objects:
-        for target in objects:
+    structures = [o for o in objects if o.type == ObjectType.STRUCTURE]
+    zones = [o for o in objects if o.type == ObjectType.ZONE]
+    beds = [o for o in objects if o.type == ObjectType.BED]
+    crops = [o for o in objects if o.type == ObjectType.CROP]
 
-            if source.id == target.id:
-                continue
+    main_structure = structures[0] if structures else None
 
-            # ------------------------------------------------
-            # Crop belongs to the bed containing its position
-            # ------------------------------------------------
-            if (
-                source.type == ObjectType.CROP
-                and target.type == ObjectType.BED
-                and _is_inside(source, target)
-            ):
-                relationships.append(
-                    SpatialRelationship(
-                        source_id=source.id,
-                        relation=RelationshipType.BELONGS_TO,
-                        target_id=target.id,
-                    )
-                )
+    # 1. Structure contains Zones
+    if main_structure:
+        for z in zones:
+            relationships.append(SpatialRelationship(
+                source_id=main_structure.id,
+                relation=RelationshipType.CONTAINS,
+                target_id=z.id
+            ))
 
-            # ------------------------------------------------
-            # Bed is inside a zone
-            # ------------------------------------------------
-            elif (
-                source.type == ObjectType.BED
-                and target.type == ObjectType.ZONE
-                and _is_inside(source, target)
-            ):
-                relationships.append(
-                    SpatialRelationship(
-                        source_id=source.id,
-                        relation=RelationshipType.INSIDE,
-                        target_id=target.id,
-                    )
-                )
+    # 2. Beds inside Zones
+    for b in beds:
+        nearest_zone = None
+        min_dist = float("inf")
+        for z in zones:
+            dist = calculate_distance(b, z)
+            if dist < min_dist:
+                min_dist = dist
+                nearest_zone = z
 
-            # ------------------------------------------------
-            # Zone is inside polyhouse
-            # ------------------------------------------------
-            elif (
-                source.type == ObjectType.ZONE
-                and target.type == ObjectType.STRUCTURE
-                and target.class_name == "polyhouse"
-                and _is_inside(source, target)
-            ):
-                relationships.append(
-                    SpatialRelationship(
-                        source_id=source.id,
-                        relation=RelationshipType.INSIDE,
-                        target_id=target.id,
-                    )
-                )
+        if nearest_zone:
+            relationships.append(SpatialRelationship(
+                source_id=b.id,
+                relation=RelationshipType.INSIDE,
+                target_id=nearest_zone.id
+            ))
+
+    # 3. Crops belong to Beds
+    for c in crops:
+        nearest_bed = None
+        min_dist = float("inf")
+        for b in beds:
+            dist = calculate_distance(c, b)
+            if dist < min_dist:
+                min_dist = dist
+                nearest_bed = b
+
+        if nearest_bed:
+            relationships.append(SpatialRelationship(
+                source_id=c.id,
+                relation=RelationshipType.BELONGS_TO,
+                target_id=nearest_bed.id
+            ))
 
     return relationships
-
-
-def _is_inside(
-    source: SpatialObject,
-    container: SpatialObject,
-) -> bool:
-    """
-    Check whether the center of the source object
-    lies inside the 2D bounds of the container.
-
-    This is a simple MVP implementation.
-    """
-
-    if container.dimensions is None:
-        return False
-
-    source_x = source.position.x_m
-    source_y = source.position.y_m
-
-    container_x = container.position.x_m
-    container_y = container.position.y_m
-
-    half_width = container.dimensions.width_m / 2
-    half_depth = container.dimensions.depth_m / 2
-
-    min_x = container_x - half_width
-    max_x = container_x + half_width
-
-    min_y = container_y - half_depth
-    max_y = container_y + half_depth
-
-    return (
-        min_x <= source_x <= max_x
-        and
-        min_y <= source_y <= max_y
-    )
