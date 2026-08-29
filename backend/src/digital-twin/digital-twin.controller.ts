@@ -15,8 +15,19 @@ export class DigitalTwinController {
     return this.digitalTwinService.getHeatmap();
   }
 
+  @Get('spatial')
+  getSpatialDigitalTwin() {
+    return this.digitalTwinService.getSpatialDigitalTwin();
+  }
+
+  @Get(':id/spatial')
+  getSpatialDigitalTwinById(@Param('id') id: string) {
+    return this.digitalTwinService.getSpatialDigitalTwin(id);
+  }
+
   @Get('beds/:bedId')
   getBed(@Param('bedId') bedId: string) {
     return this.digitalTwinService.getBed(bedId);
   }
 }
+

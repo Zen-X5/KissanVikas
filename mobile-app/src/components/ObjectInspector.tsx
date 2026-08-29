@@ -115,9 +115,10 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    justify: 'space-between',
+    justifyContent: 'space-between',
     alignItems: 'flex-start',
   },
+
   titleArea: {
     flex: 1,
     paddingRight: 12,

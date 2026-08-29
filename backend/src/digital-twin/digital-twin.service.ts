@@ -1,7 +1,10 @@
 import { Injectable, Logger, OnModuleInit, Optional } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import * as fs from 'fs';
+import * as path from 'path';
 import { DigitalTwin, DigitalTwinDocument, BedState, ZoneState } from './schemas';
+
 
 
 @Injectable()
@@ -291,4 +294,147 @@ export class DigitalTwinService implements OnModuleInit {
       })),
     };
   }
+
+  /**
+   * Generates contract-compliant SpatialObject[] for Mobile App 2D/3D map
+   */
+  async getSpatialDigitalTwin(polyhouseId: string = 'POLYHOUSE-01') {
+    let twin = await this.getDigitalTwin();
+
+    // Check if latest testing JSON file is available
+    const possibleJsonPaths = [
+      path.resolve(process.cwd(), '..', 'testing', 'digital_twin_latest.json'),
+      path.resolve(process.cwd(), 'testing', 'digital_twin_latest.json'),
+      path.resolve('D:/KissanVikas/testing/digital_twin_latest.json'),
+      path.resolve('D:/KissanVikas/digital_twin_complete.json'),
+    ];
+
+    for (const jsonPath of possibleJsonPaths) {
+      if (fs.existsSync(jsonPath)) {
+        try {
+          const raw = fs.readFileSync(jsonPath, 'utf-8');
+          const parsed = JSON.parse(raw);
+          if (parsed && parsed.beds && parsed.beds.length > 0) {
+            twin = parsed;
+            break;
+          }
+        } catch (e) {}
+      }
+    }
+
+    const objects: any[] = [];
+
+    // 1. Structure: 60m x 30m Polyhouse Frame
+    objects.push({
+      id: 'structure_polyhouse_01',
+      type: 'structure',
+      class_name: 'polyhouse',
+      confidence: 1.0,
+      position: { x_m: 0, y_m: 0, z_m: 0 },
+      dimensions: { width_m: 60.0, depth_m: 30.0, height_m: 6.5 },
+      source_frames: ['F-000001'],
+    });
+
+    // 2. Zones: 4 Production Quadrants
+    objects.push(
+      {
+        id: 'zone_a_tomato',
+        type: 'zone',
+        class_name: 'tomato_zone',
+        crop_type: 'tomato',
+        confidence: 0.98,
+        position: { x_m: -14.5, y_m: 8.5, z_m: 0 },
+        dimensions: { width_m: 26.0, depth_m: 12.0 },
+        source_frames: [],
+      },
+      {
+        id: 'zone_b_capsicum',
+        type: 'zone',
+        class_name: 'capsicum_zone',
+        crop_type: 'capsicum',
+        confidence: 0.96,
+        position: { x_m: 14.5, y_m: 8.5, z_m: 0 },
+        dimensions: { width_m: 26.0, depth_m: 12.0 },
+        source_frames: [],
+      },
+      {
+        id: 'zone_c_cucumber',
+        type: 'zone',
+        class_name: 'cucumber_zone',
+        crop_type: 'cucumber',
+        confidence: 0.99,
+        position: { x_m: -14.5, y_m: -8.5, z_m: 0 },
+        dimensions: { width_m: 26.0, depth_m: 12.0 },
+        source_frames: [],
+      },
+      {
+        id: 'zone_d_eggplant',
+        type: 'zone',
+        class_name: 'eggplant_zone',
+        crop_type: 'eggplant',
+        confidence: 0.97,
+        position: { x_m: 14.5, y_m: -8.5, z_m: 0 },
+        dimensions: { width_m: 26.0, depth_m: 12.0 },
+        source_frames: [],
+      },
+    );
+
+    // 3. Beds & Plants from Digital Twin
+    const beds = twin?.beds || [];
+    for (const bed of beds) {
+      const xMin = bed.coordinates?.x_min ?? -10;
+      const xMax = bed.coordinates?.x_max ?? -2;
+      const yMin = bed.coordinates?.y_min ?? 2.5;
+      const yMax = bed.coordinates?.y_max ?? 3.7;
+
+      const posX = (xMin + xMax) / 2;
+      const posY = (yMin + yMax) / 2;
+      const widthM = Math.abs(xMax - xMin);
+      const depthM = Math.abs(yMax - yMin);
+
+      // Add Bed Object
+      objects.push({
+        id: bed.bed_id,
+        type: 'bed',
+        class_name: 'raised_bed',
+        confidence: 0.99,
+        position: { x_m: posX, y_m: posY, z_m: 0.4 },
+        dimensions: { width_m: widthM, depth_m: depthM, height_m: 0.8 },
+        source_frames: ['F-000001'],
+        health_score: bed.health_score ?? 0.95,
+        pest_risk: bed.pest_risk ?? 'none',
+        plant_count: bed.plant_count ?? 32,
+        crop_type: bed.crop_type,
+        variety: bed.variety,
+      });
+
+      // Add 7 Representative Plant Objects per bed for SVG map rendering
+      const plantItems = 7;
+      for (let p = 0; p < plantItems; p++) {
+        const plantX = xMin + ((p + 0.5) * widthM) / plantItems;
+        objects.push({
+          id: `PLANT-${bed.bed_id}-${p + 1}`,
+          type: 'crop',
+          class_name: bed.crop_type || 'tomato',
+          confidence: bed.health_score ?? 0.95,
+          position: { x_m: plantX, y_m: posY, z_m: 0.8 },
+          dimensions: { width_m: 0.6, depth_m: 0.6 },
+          source_frames: [],
+          health_score: bed.health_score ?? 0.95,
+          pest_risk: bed.pest_risk ?? 'none',
+          crop_type: bed.crop_type,
+        });
+      }
+    }
+
+    return {
+      polyhouse_id: polyhouseId,
+      timestamp: new Date().toISOString(),
+      facility_name: 'Smart Polyhouse Twin #1',
+      dimensions: { width_m: 60.0, depth_m: 30.0, height_m: 6.5 },
+      total_objects: objects.length,
+      objects,
+    };
+  }
 }
+
